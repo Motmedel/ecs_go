@@ -491,10 +491,10 @@ type VulnerabilityScanner struct {
 }
 
 type VulnerabilityScore struct {
-	Base          any    `json:"base,omitempty"`
-	Environmental any    `json:"environmental,omitempty"`
-	Temporal      any    `json:"temporal,omitempty"`
-	Version       string `json:"version,omitempty"`
+	Base          float32 `json:"base,omitempty"`
+	Environmental float32 `json:"environmental,omitempty"`
+	Temporal      float32 `json:"temporal,omitempty"`
+	Version       string  `json:"version,omitempty"`
 }
 
 type Vulnerability struct {
