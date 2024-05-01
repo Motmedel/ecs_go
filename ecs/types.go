@@ -60,7 +60,7 @@ type User struct {
 	Domain   string `json:"domain,omitempty"`
 	Email    string `json:"email,omitempty"`
 	FullName string `json:"full_name,omitempty"`
-	Group    Group  `json:"group,omitempty"`
+	Group    *Group `json:"group,omitempty"`
 	Hash     string `json:"hash,omitempty"`
 	Id       string `json:"id,omitempty"`
 	Name     string `json:"name,omitempty"`
@@ -68,13 +68,13 @@ type User struct {
 }
 
 type Client struct {
-	Address string           `json:"address,omitempty"`
-	As      AutonomousSystem `json:"as,omitempty"`
-	Bytes   int64            `json:"bytes,omitempty"`
-	Domain  string           `json:"domain,omitempty"`
-	Geo     Geo              `json:"geo,omitempty"`
-	Nat     Nat              `json:"nat,omitempty"`
-	User    User             `json:"user,omitempty"`
+	Address string            `json:"address,omitempty"`
+	As      *AutonomousSystem `json:"as,omitempty"`
+	Bytes   int64             `json:"bytes,omitempty"`
+	Domain  string            `json:"domain,omitempty"`
+	Geo     *Geo              `json:"geo,omitempty"`
+	Nat     *Nat              `json:"nat,omitempty"`
+	User    *User             `json:"user,omitempty"`
 }
 
 type CloudAccount struct {
@@ -124,27 +124,27 @@ type CloudOriginTargetService struct {
 }
 
 type CloudOriginTarget struct {
-	Account          CloudOriginTargetAccount  `json:"account,omitempty"`
-	AvailabilityZone string                    `json:"availability_zone,omitempty"`
-	Instance         CloudOriginTargetInstance `json:"instance,omitempty"`
-	Machine          CloudOriginTargetMachine  `json:"machine,omitempty"`
-	Project          CloudOriginTargetProject  `json:"project,omitempty"`
-	Provider         string                    `json:"provider,omitempty"`
-	Region           string                    `json:"region,omitempty"`
-	Service          CloudOriginTargetService  `json:"service,omitempty"`
+	Account          *CloudOriginTargetAccount  `json:"account,omitempty"`
+	AvailabilityZone string                     `json:"availability_zone,omitempty"`
+	Instance         *CloudOriginTargetInstance `json:"instance,omitempty"`
+	Machine          *CloudOriginTargetMachine  `json:"machine,omitempty"`
+	Project          *CloudOriginTargetProject  `json:"project,omitempty"`
+	Provider         string                     `json:"provider,omitempty"`
+	Region           string                     `json:"region,omitempty"`
+	Service          *CloudOriginTargetService  `json:"service,omitempty"`
 }
 
 type Cloud struct {
-	Account          CloudAccount      `json:"account,omitempty"`
-	AvailabilityZone string            `json:"availability_zone,omitempty"`
-	Instance         CloudInstance     `json:"instance,omitempty"`
-	Machine          CloudMachine      `json:"machine,omitempty"`
-	Origin           CloudOriginTarget `json:"origin,omitempty"`
-	Project          CloudProject      `json:"project,omitempty"`
-	Provider         string            `json:"provider,omitempty"`
-	Region           string            `json:"region,omitempty"`
-	Service          CloudService      `json:"service,omitempty"`
-	Target           CloudOriginTarget `json:"target,omitempty"`
+	Account          *CloudAccount      `json:"account,omitempty"`
+	AvailabilityZone string             `json:"availability_zone,omitempty"`
+	Instance         *CloudInstance     `json:"instance,omitempty"`
+	Machine          *CloudMachine      `json:"machine,omitempty"`
+	Origin           *CloudOriginTarget `json:"origin,omitempty"`
+	Project          *CloudProject      `json:"project,omitempty"`
+	Provider         string             `json:"provider,omitempty"`
+	Region           string             `json:"region,omitempty"`
+	Service          *CloudService      `json:"service,omitempty"`
+	Target           *CloudOriginTarget `json:"target,omitempty"`
 }
 
 type Container struct {
@@ -172,14 +172,14 @@ type DnsQuestion struct {
 }
 
 type Dns struct {
-	Answers      []DnsAnswer `json:"answers,omitempty"`
-	Headers      any         `json:"headers,omitempty"`
-	Id           string      `json:"id,omitempty"`
-	OpCode       string      `json:"op_code,omitempty"`
-	Question     DnsQuestion `json:"question,omitempty"`
-	ResolvedIp   []string    `json:"resolved_ip,omitempty"`
-	ResponseCode string      `json:"response_code,omitempty"`
-	Type         string      `json:"type,omitempty"`
+	Answers      []*DnsAnswer `json:"answers,omitempty"`
+	Headers      any          `json:"headers,omitempty"`
+	Id           string       `json:"id,omitempty"`
+	OpCode       string       `json:"op_code,omitempty"`
+	Question     *DnsQuestion `json:"question,omitempty"`
+	ResolvedIp   []string     `json:"resolved_ip,omitempty"`
+	ResponseCode string       `json:"response_code,omitempty"`
+	Type         string       `json:"type,omitempty"`
 }
 
 type Email struct {
@@ -383,7 +383,7 @@ type Server struct {
 	Port             int    `json:"port,omitempty"`
 	RegisteredDomain string `json:"registered_domain,omitempty"`
 	TopLevelDomain   string `json:"top_level_domain,omitempty"`
-	User             User   `json:"user,omitempty"`
+	User             *User  `json:"user,omitempty"`
 }
 
 type Service struct {
@@ -427,7 +427,7 @@ type Threat struct {
 		} `json:"file,omitempty"`
 		Ip   string `json:"ip,omitempty"`
 		Type string `json:"type,omitempty"`
-		Url  Url    `json:"url,omitempty"`
+		Url  *Url   `json:"url,omitempty"`
 	} `json:"indicator,omitempty"`
 	Tactic struct {
 		Id        string `json:"id,omitempty"`
@@ -498,16 +498,16 @@ type VulnerabilityScore struct {
 }
 
 type Vulnerability struct {
-	Category       string               `json:"category,omitempty"`
-	Classification string               `json:"classification,omitempty"`
-	Description    string               `json:"description,omitempty"`
-	Enumeration    string               `json:"enumeration,omitempty"`
-	Id             string               `json:"id,omitempty"`
-	Reference      string               `json:"reference,omitempty"`
-	ReportId       string               `json:"report_id,omitempty"`
-	Scanner        VulnerabilityScanner `json:"scanner,omitempty"`
-	Score          VulnerabilityScore   `json:"score,omitempty"`
-	Severity       string               `json:"severity,omitempty"`
+	Category       string                `json:"category,omitempty"`
+	Classification string                `json:"classification,omitempty"`
+	Description    string                `json:"description,omitempty"`
+	Enumeration    string                `json:"enumeration,omitempty"`
+	Id             string                `json:"id,omitempty"`
+	Reference      string                `json:"reference,omitempty"`
+	ReportId       string                `json:"report_id,omitempty"`
+	Scanner        *VulnerabilityScanner `json:"scanner,omitempty"`
+	Score          *VulnerabilityScore   `json:"score,omitempty"`
+	Severity       string                `json:"severity,omitempty"`
 }
 
 type X509 struct {
