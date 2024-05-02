@@ -6,11 +6,11 @@ type Base struct {
 	Message   string            `json:"message,omitempty"`
 	Tags      string            `json:"tags,omitempty"`
 
-	*Event
-	*Rule
-	*Server
-	*Network
-	*Vulnerability
+	Event         *Event         `json:"event,omitempty"`
+	Rule          *Rule          `json:"rule,omitempty"`
+	Server        *Server        `json:"server,omitempty"`
+	Network       *Network       `json:"network,omitempty"`
+	Vulnerability *Vulnerability `json:"vulnerability,omitempty"`
 }
 
 type AgentBuild struct {
