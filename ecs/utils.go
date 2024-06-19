@@ -63,11 +63,14 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 		port, _ = strconv.Atoi(portString)
 	}
 
-	server := Server{Address: trimmedHost, Port: port}
-	if ip := net.ParseIP(trimmedHost); ip != nil {
-		server.Ip = trimmedHost
-	} else {
-		server.Domain = trimmedHost
+	var server *Server
+	if trimmedHost != "" || port != 0 {
+		server = &Server{Address: trimmedHost, Port: port}
+		if ip := net.ParseIP(trimmedHost); ip != nil {
+			server.Ip = trimmedHost
+		} else {
+			server.Domain = trimmedHost
+		}
 	}
 
 	var username string
@@ -78,7 +81,6 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 	}
 
 	var body *HttpBody
-
 	if extractBody {
 		data, err := io.ReadAll(request.Body)
 		if err != nil {
@@ -91,9 +93,11 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 	}
 
 	var client *Client
-	if clientIpAddress, clientPort, err := splitAddress(request.RemoteAddr); err != nil {
-		client = &Client{Ip: clientIpAddress, Port: clientPort}
+	clientIpAddress, clientPort, err := splitAddress(request.RemoteAddr)
+	if err != nil {
+		return nil, err
 	}
+	client = &Client{Ip: clientIpAddress, Port: clientPort}
 
 	// TODO: Add Public Suffix List parsing from a global variable.
 
@@ -106,11 +110,10 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 			},
 			Version: fmt.Sprintf("%d.%d", request.ProtoMajor, request.ProtoMinor),
 		},
-		Server: &server,
+		Server: server,
 		Url: &Url{
 			Domain:   host,
 			Fragment: requestUrl.Fragment,
-			Full:     originalUrl,
 			Original: originalUrl,
 			Password: password,
 			Path:     requestUrl.Path,
