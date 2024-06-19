@@ -13,6 +13,7 @@ type Base struct {
 	Server        *Server        `json:"server,omitempty"`
 	Network       *Network       `json:"network,omitempty"`
 	Url           *Url           `json:"url,omitempty"`
+	UserAgent     *UserAgent     `json:"user_agent,omitempty"`
 	Vulnerability *Vulnerability `json:"vulnerability,omitempty"`
 }
 
@@ -497,14 +498,16 @@ type Url struct {
 	Username         string `json:"username,omitempty"`
 }
 
+type UserAgentDevice struct {
+	Name string `json:"name,omitempty"`
+}
+
 type UserAgent struct {
-	Device struct {
-		Name string `json:"name,omitempty"`
-	} `json:"device,omitempty"`
-	Name     string `json:"name,omitempty"`
-	Original string `json:"original,omitempty"`
-	Os       Os     `json:"os,omitempty"`
-	Version  string `json:"version,omitempty"`
+	Device   *UserAgentDevice `json:"device,omitempty"`
+	Name     string           `json:"name,omitempty"`
+	Original string           `json:"original,omitempty"`
+	Os       *Os              `json:"os,omitempty"`
+	Version  string           `json:"version,omitempty"`
 }
 
 type VulnerabilityScanner struct {

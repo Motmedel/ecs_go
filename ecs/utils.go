@@ -92,21 +92,25 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 		}
 	}
 
-	var client *Client
 	clientIpAddress, clientPort, err := splitAddress(request.RemoteAddr)
 	if err != nil {
 		return nil, err
 	}
-	client = &Client{Ip: clientIpAddress, Port: clientPort}
+
+	var userAgent *UserAgent
+	if userAgentOriginal := request.UserAgent(); userAgentOriginal != "" {
+		userAgent = &UserAgent{Original: userAgentOriginal}
+	}
 
 	// TODO: Add Public Suffix List parsing from a global variable.
 
 	return &Base{
-		Client: client,
+		Client: &Client{Ip: clientIpAddress, Port: clientPort},
 		Http: &Http{
 			Request: &HttpRequest{
-				Method: request.Method,
-				Body:   body,
+				Method:   request.Method,
+				Body:     body,
+				Referrer: request.Referer(),
 			},
 			Version: fmt.Sprintf("%d.%d", request.ProtoMajor, request.ProtoMinor),
 		},
@@ -122,5 +126,6 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 			Scheme:   requestUrl.Scheme,
 			Username: username,
 		},
+		UserAgent: userAgent,
 	}, nil
 }
