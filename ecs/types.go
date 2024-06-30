@@ -7,6 +7,7 @@ type Base struct {
 	Tags      string            `json:"tags,omitempty"`
 
 	Client        *Client        `json:"client,omitempty"`
+	Error         *Error         `json:"error,omitempty"`
 	Event         *Event         `json:"event,omitempty"`
 	Http          *Http          `json:"http,omitempty"`
 	Rule          *Rule          `json:"rule,omitempty"`
@@ -191,6 +192,14 @@ type Dns struct {
 	ResolvedIp   []string     `json:"resolved_ip,omitempty"`
 	ResponseCode string       `json:"response_code,omitempty"`
 	Type         string       `json:"type,omitempty"`
+}
+
+type Error struct {
+	Code       string `json:"code,omitempty"`
+	Id         string `json:"id,omitempty"`
+	Message    string `json:"message,omitempty"`
+	StackTrace string `json:"stack_trace,omitempty"`
+	Type       string `json:"type,omitempty"`
 }
 
 type Email struct {
