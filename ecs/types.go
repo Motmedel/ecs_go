@@ -1,5 +1,11 @@
 package ecs
 
+type DomainBreakdown struct {
+	RegisteredDomain string `json:"registered_domain,omitempty"`
+	Subdomain        string `json:"subdomain,omitempty"`
+	TopLevelDomain   string `json:"top_level_domain,omitempty"`
+}
+
 type Base struct {
 	Timestamp string            `json:"@timestamp,omitempty"`
 	Labels    map[string]string `json:"labels,omitempty"`
@@ -73,20 +79,17 @@ type User struct {
 }
 
 type Client struct {
-	Address          string            `json:"address,omitempty"`
-	Bytes            int               `json:"bytes,omitempty"`
-	Domain           string            `json:"domain,omitempty"`
-	Ip               string            `json:"ip,omitempty"`
-	Mac              string            `json:"mac,omitempty"`
-	Nat              *Nat              `json:"nat,omitempty"`
-	Packets          int               `json:"packets,omitempty"`
-	Port             int               `json:"port,omitempty"`
-	RegisteredDomain string            `json:"registered_domain,omitempty"`
-	Subdomain        string            `json:"subdomain,omitempty"`
-	TopLevelDomain   string            `json:"top_level_domain,omitempty"`
-	As               *AutonomousSystem `json:"as,omitempty"`
-	Geo              *Geo              `json:"geo,omitempty"`
-	User             *User             `json:"user,omitempty"`
+	Address string            `json:"address,omitempty"`
+	Bytes   int               `json:"bytes,omitempty"`
+	Domain  string            `json:"domain,omitempty"`
+	Ip      string            `json:"ip,omitempty"`
+	Mac     string            `json:"mac,omitempty"`
+	Nat     *Nat              `json:"nat,omitempty"`
+	Packets int               `json:"packets,omitempty"`
+	Port    int               `json:"port,omitempty"`
+	As      *AutonomousSystem `json:"as,omitempty"`
+	Geo     *Geo              `json:"geo,omitempty"`
+	User    *User             `json:"user,omitempty"`
 }
 
 type CloudAccount struct {
@@ -310,6 +313,7 @@ type HttpRequest struct {
 type HttpResponse struct {
 	Body       *HttpBody `json:"body,omitempty"`
 	Bytes      int       `json:"bytes,omitempty"`
+	MimeType   string    `json:"mime_type,omitempty"`
 	StatusCode int       `json:"status_code,omitempty"`
 }
 
@@ -399,15 +403,13 @@ type Rule struct {
 }
 
 type Server struct {
-	Address          string `json:"address,omitempty"`
-	Bytes            *int64 `json:"bytes,omitempty"`
-	Domain           string `json:"domain,omitempty"`
-	Ip               string `json:"ip,omitempty"`
-	Mac              string `json:"mac,omitempty"`
-	Port             int    `json:"port,omitempty"`
-	RegisteredDomain string `json:"registered_domain,omitempty"`
-	TopLevelDomain   string `json:"top_level_domain,omitempty"`
-	User             *User  `json:"user,omitempty"`
+	Address string `json:"address,omitempty"`
+	Bytes   *int64 `json:"bytes,omitempty"`
+	Domain  string `json:"domain,omitempty"`
+	Ip      string `json:"ip,omitempty"`
+	Mac     string `json:"mac,omitempty"`
+	Port    int    `json:"port,omitempty"`
+	User    *User  `json:"user,omitempty"`
 }
 
 type Service struct {
@@ -491,20 +493,17 @@ type Tls struct {
 }
 
 type Url struct {
-	Domain           string `json:"domain,omitempty"`
-	Extension        string `json:"extension,omitempty"`
-	Fragment         string `json:"fragment,omitempty"`
-	Full             string `json:"full,omitempty"`
-	Original         string `json:"original,omitempty"`
-	Password         string `json:"password,omitempty"`
-	Path             string `json:"path,omitempty"`
-	Port             int    `json:"port,omitempty"`
-	Query            string `json:"query,omitempty"`
-	RegisteredDomain string `json:"registered_domain,omitempty"`
-	Scheme           string `json:"scheme,omitempty"`
-	Subdomain        string `json:"subdomain,omitempty"`
-	TopLevelDomain   string `json:"top_level_domain,omitempty"`
-	Username         string `json:"username,omitempty"`
+	Domain    string `json:"domain,omitempty"`
+	Extension string `json:"extension,omitempty"`
+	Fragment  string `json:"fragment,omitempty"`
+	Full      string `json:"full,omitempty"`
+	Original  string `json:"original,omitempty"`
+	Password  string `json:"password,omitempty"`
+	Path      string `json:"path,omitempty"`
+	Port      int    `json:"port,omitempty"`
+	Query     string `json:"query,omitempty"`
+	Scheme    string `json:"scheme,omitempty"`
+	Username  string `json:"username,omitempty"`
 }
 
 type UserAgentDevice struct {

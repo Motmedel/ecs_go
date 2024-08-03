@@ -2,6 +2,7 @@ package ecs
 
 import (
 	"fmt"
+	"golang.org/x/net/publicsuffix"
 	"io"
 	"net"
 	"net/http"
@@ -41,11 +42,37 @@ func validOptionalPort(port string) bool {
 	return true
 }
 
+func GetDomainBreakdown(domainString string) *DomainBreakdown {
+	etld, icann := publicsuffix.PublicSuffix(domainString)
+	if !icann && strings.IndexByte(etld, '.') == -1 {
+		return nil
+	}
+
+	registeredDomain, err := publicsuffix.EffectiveTLDPlusOne(domainString)
+	if err != nil {
+		return nil
+	}
+
+	domainBreakdown := DomainBreakdown{
+		TopLevelDomain:   etld,
+		RegisteredDomain: registeredDomain,
+	}
+
+	if subdomain := strings.TrimSuffix(domainString, "."+registeredDomain); subdomain != domainString {
+		domainBreakdown.Subdomain = subdomain
+	}
+
+	return &domainBreakdown
+}
+
 func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 	requestUrl := request.URL
 	originalUrl := requestUrl.String()
 
 	host := requestUrl.Host
+	if host == "" {
+		host = request.Host
+	}
 	// NOTE: Copied from `url.splitHostPort`
 	colon := strings.LastIndexByte(host, ':')
 	if colon != -1 && validOptionalPort(host[colon:]) {
