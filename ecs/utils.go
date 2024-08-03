@@ -85,6 +85,8 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 		trimmedHost = host[1 : len(host)-1]
 	}
 
+	domainBreakdown := GetDomainBreakdown(trimmedHost)
+
 	var port int
 	if portString := requestUrl.Port(); portString != "" {
 		port, _ = strconv.Atoi(portString)
@@ -97,6 +99,11 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 			server.Ip = trimmedHost
 		} else {
 			server.Domain = trimmedHost
+			if domainBreakdown != nil {
+				server.RegisteredDomain = domainBreakdown.RegisteredDomain
+				server.Subdomain = domainBreakdown.Subdomain
+				server.TopLevelDomain = domainBreakdown.TopLevelDomain
+			}
 		}
 	}
 
@@ -133,7 +140,22 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 		userAgent = &UserAgent{Original: userAgentOriginal}
 	}
 
-	// TODO: Add Public Suffix List parsing from a global variable.
+	url := &Url{
+		Domain:   host,
+		Fragment: requestUrl.Fragment,
+		Original: originalUrl,
+		Password: password,
+		Path:     requestUrl.Path,
+		Port:     port,
+		Query:    requestUrl.RawQuery,
+		Scheme:   requestUrl.Scheme,
+		Username: username,
+	}
+	if domainBreakdown != nil {
+		url.RegisteredDomain = domainBreakdown.RegisteredDomain
+		url.Subdomain = domainBreakdown.Subdomain
+		url.TopLevelDomain = domainBreakdown.TopLevelDomain
+	}
 
 	return &Base{
 		Client: client,
@@ -145,18 +167,8 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 			},
 			Version: fmt.Sprintf("%d.%d", request.ProtoMajor, request.ProtoMinor),
 		},
-		Server: server,
-		Url: &Url{
-			Domain:   host,
-			Fragment: requestUrl.Fragment,
-			Original: originalUrl,
-			Password: password,
-			Path:     requestUrl.Path,
-			Port:     port,
-			Query:    requestUrl.RawQuery,
-			Scheme:   requestUrl.Scheme,
-			Username: username,
-		},
+		Server:    server,
+		Url:       url,
 		UserAgent: userAgent,
 	}, nil
 }

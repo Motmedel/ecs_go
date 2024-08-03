@@ -403,6 +403,7 @@ type Rule struct {
 }
 
 type Server struct {
+	DomainBreakdown
 	Address string `json:"address,omitempty"`
 	Bytes   *int64 `json:"bytes,omitempty"`
 	Domain  string `json:"domain,omitempty"`
@@ -420,6 +421,7 @@ type Service struct {
 }
 
 type Source struct {
+	DomainBreakdown
 	Address string `json:"address,omitempty"`
 	Bytes   int64  `json:"bytes,omitempty"`
 	Ip      string `json:"ip,omitempty"`
@@ -493,6 +495,7 @@ type Tls struct {
 }
 
 type Url struct {
+	DomainBreakdown
 	Domain    string `json:"domain,omitempty"`
 	Extension string `json:"extension,omitempty"`
 	Fragment  string `json:"fragment,omitempty"`
