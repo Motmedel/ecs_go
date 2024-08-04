@@ -66,6 +66,10 @@ func GetDomainBreakdown(domainString string) *DomainBreakdown {
 }
 
 func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
+	if request == nil {
+		return nil, nil
+	}
+
 	requestUrl := request.URL
 	originalUrl := requestUrl.String()
 
@@ -161,9 +165,10 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 		Client: client,
 		Http: &Http{
 			Request: &HttpRequest{
-				Method:   request.Method,
-				Body:     body,
-				Referrer: request.Referer(),
+				Body:        body,
+				ContentType: request.Header.Get("Content-Type"),
+				Method:      request.Method,
+				Referrer:    request.Referer(),
 			},
 			Version: fmt.Sprintf("%d.%d", request.ProtoMajor, request.ProtoMinor),
 		},
