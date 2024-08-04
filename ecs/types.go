@@ -302,19 +302,25 @@ type HttpBody struct {
 }
 
 type HttpRequest struct {
-	Body     *HttpBody `json:"body,omitempty"`
-	Bytes    int       `json:"bytes,omitempty"`
-	Id       string    `json:"id,omitempty"`
-	Method   string    `json:"method,omitempty"`
-	MimeType string    `json:"mime_type,omitempty"`
-	Referrer string    `json:"referrer,omitempty"`
+	Body  *HttpBody `json:"body,omitempty"`
+	Bytes int       `json:"bytes,omitempty"`
+	// NOTE: Custom
+	ContentType string `json:"content_type,omitempty"`
+	Id          string `json:"id,omitempty"`
+	Method      string `json:"method,omitempty"`
+	MimeType    string `json:"mime_type,omitempty"`
+	Referrer    string `json:"referrer,omitempty"`
 }
 
 type HttpResponse struct {
-	Body       *HttpBody `json:"body,omitempty"`
-	Bytes      int       `json:"bytes,omitempty"`
-	MimeType   string    `json:"mime_type,omitempty"`
-	StatusCode int       `json:"status_code,omitempty"`
+	Body  *HttpBody `json:"body,omitempty"`
+	Bytes int       `json:"bytes,omitempty"`
+	// NOTE: Custom
+	ContentType string `json:"content_type,omitempty"`
+	MimeType    string `json:"mime_type,omitempty"`
+	// NOTE: Custom
+	ReasonPhrase string `json:"reason_phrase,omitempty"`
+	StatusCode   int    `json:"status_code,omitempty"`
 }
 
 type Http struct {
