@@ -6,18 +6,35 @@ type DomainBreakdown struct {
 	TopLevelDomain   string `json:"top_level_domain,omitempty"`
 }
 
+type Target struct {
+	DomainBreakdown
+	Address string            `json:"address,omitempty"`
+	Bytes   int               `json:"bytes,omitempty"`
+	Domain  string            `json:"domain,omitempty"`
+	Ip      string            `json:"ip,omitempty"`
+	Mac     string            `json:"mac,omitempty"`
+	Nat     *Nat              `json:"nat,omitempty"`
+	Packets int               `json:"packets,omitempty"`
+	Port    int               `json:"port,omitempty"`
+	As      *AutonomousSystem `json:"as,omitempty"`
+	Geo     *Geo              `json:"geo,omitempty"`
+	User    *User             `json:"user,omitempty"`
+}
+
 type Base struct {
 	Timestamp string            `json:"@timestamp,omitempty"`
 	Labels    map[string]string `json:"labels,omitempty"`
 	Message   string            `json:"message,omitempty"`
 	Tags      string            `json:"tags,omitempty"`
 
-	Client        *Client        `json:"client,omitempty"`
+	Client        *Target        `json:"client,omitempty"`
+	Destination   *Target        `json:"destination,omitempty"`
 	Error         *Error         `json:"error,omitempty"`
 	Event         *Event         `json:"event,omitempty"`
 	Http          *Http          `json:"http,omitempty"`
 	Rule          *Rule          `json:"rule,omitempty"`
-	Server        *Server        `json:"server,omitempty"`
+	Server        *Target        `json:"server,omitempty"`
+	Source        *Target        `json:"source,omitempty"`
 	Network       *Network       `json:"network,omitempty"`
 	Url           *Url           `json:"url,omitempty"`
 	UserAgent     *UserAgent     `json:"user_agent,omitempty"`
@@ -76,20 +93,6 @@ type User struct {
 	Id       string `json:"id,omitempty"`
 	Name     string `json:"name,omitempty"`
 	Roles    string `json:"roles,omitempty"`
-}
-
-type Client struct {
-	Address string            `json:"address,omitempty"`
-	Bytes   int               `json:"bytes,omitempty"`
-	Domain  string            `json:"domain,omitempty"`
-	Ip      string            `json:"ip,omitempty"`
-	Mac     string            `json:"mac,omitempty"`
-	Nat     *Nat              `json:"nat,omitempty"`
-	Packets int               `json:"packets,omitempty"`
-	Port    int               `json:"port,omitempty"`
-	As      *AutonomousSystem `json:"as,omitempty"`
-	Geo     *Geo              `json:"geo,omitempty"`
-	User    *User             `json:"user,omitempty"`
 }
 
 type CloudAccount struct {
@@ -408,39 +411,11 @@ type Rule struct {
 	Version     string `json:"version,omitempty"`
 }
 
-type Server struct {
-	DomainBreakdown
-	Address string `json:"address,omitempty"`
-	Bytes   *int64 `json:"bytes,omitempty"`
-	Domain  string `json:"domain,omitempty"`
-	Ip      string `json:"ip,omitempty"`
-	Mac     string `json:"mac,omitempty"`
-	Port    int    `json:"port,omitempty"`
-	User    *User  `json:"user,omitempty"`
-}
-
 type Service struct {
 	Id    string `json:"id,omitempty"`
 	Name  string `json:"name,omitempty"`
 	State string `json:"state,omitempty"`
 	Type  string `json:"type,omitempty"`
-}
-
-type Source struct {
-	DomainBreakdown
-	Address string `json:"address,omitempty"`
-	Bytes   int64  `json:"bytes,omitempty"`
-	Ip      string `json:"ip,omitempty"`
-	Packets int64  `json:"packets,omitempty"`
-	Port    int    `json:"port,omitempty"`
-	Geo     struct {
-		ContinentName  string `json:"continent_name,omitempty"`
-		CountryIsoCode string `json:"country_iso_code,omitempty"`
-		Location       struct {
-			Lat float64 `json:"lat,omitempty"`
-			Lon float64 `json:"lon,omitempty"`
-		} `json:"location,omitempty"`
-	} `json:"geo,omitempty"`
 }
 
 type Threat struct {

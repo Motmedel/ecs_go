@@ -96,9 +96,9 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 		port, _ = strconv.Atoi(portString)
 	}
 
-	var server *Server
+	var server *Target
 	if trimmedHost != "" || port != 0 {
-		server = &Server{Address: trimmedHost, Port: port}
+		server = &Target{Address: trimmedHost, Port: port}
 		if ip := net.ParseIP(trimmedHost); ip != nil {
 			server.Ip = trimmedHost
 		} else {
@@ -130,13 +130,13 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 		}
 	}
 
-	var client *Client
+	var client *Target
 	if request.RemoteAddr != "" {
 		clientIpAddress, clientPort, err := splitAddress(request.RemoteAddr)
 		if err != nil {
 			return nil, err
 		}
-		client = &Client{Ip: clientIpAddress, Port: clientPort}
+		client = &Target{Ip: clientIpAddress, Port: clientPort}
 	}
 
 	var userAgent *UserAgent
