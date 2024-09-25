@@ -2,27 +2,14 @@ package ecs
 
 import (
 	"fmt"
-	"golang.org/x/net/publicsuffix"
-	"io"
+	motmedelErrors "github.com/Motmedel/utils_go/pkg/errors"
+	motmedelNet "github.com/Motmedel/utils_go/pkg/net"
+	"github.com/Motmedel/utils_go/pkg/net/domain_breakdown"
 	"net"
 	"net/http"
 	"strconv"
 	"strings"
 )
-
-func splitAddress(address string) (string, int, error) {
-	ip, port, err := net.SplitHostPort(address)
-	if err != nil {
-		return "", 0, err
-	}
-
-	portNumber, err := strconv.Atoi(port)
-	if err != nil {
-		return ip, 0, err
-	}
-
-	return ip, portNumber, nil
-}
 
 // NOTE: Copied
 // validOptionalPort reports whether port is either an empty string
@@ -42,33 +29,12 @@ func validOptionalPort(port string) bool {
 	return true
 }
 
-func GetDomainBreakdown(domainString string) *DomainBreakdown {
-	etld, icann := publicsuffix.PublicSuffix(domainString)
-	if !icann && strings.IndexByte(etld, '.') == -1 {
-		return nil
-	}
-
-	registeredDomain, err := publicsuffix.EffectiveTLDPlusOne(domainString)
-	if err != nil {
-		return nil
-	}
-
-	domainBreakdown := DomainBreakdown{
-		TopLevelDomain:   etld,
-		RegisteredDomain: registeredDomain,
-	}
-
-	if subdomain := strings.TrimSuffix(domainString, "."+registeredDomain); subdomain != domainString {
-		domainBreakdown.Subdomain = subdomain
-	}
-
-	return &domainBreakdown
-}
-
-func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
+func ParseHttpRequest(request *http.Request, bodyData []byte) (*Base, error) {
 	if request == nil {
 		return nil, nil
 	}
+
+	network := &Network{Protocol: "http"}
 
 	requestUrl := request.URL
 	originalUrl := requestUrl.String()
@@ -89,7 +55,7 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 		trimmedHost = host[1 : len(host)-1]
 	}
 
-	domainBreakdown := GetDomainBreakdown(trimmedHost)
+	domainBreakdown := domain_breakdown.GetDomainBreakdown(trimmedHost)
 
 	var port int
 	if portString := requestUrl.Port(); portString != "" {
@@ -101,6 +67,11 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 		server = &Target{Address: trimmedHost, Port: port}
 		if ip := net.ParseIP(trimmedHost); ip != nil {
 			server.Ip = trimmedHost
+			if ipVersion := motmedelNet.GetIpVersion(&ip); ipVersion == 4 {
+				network.Type = "ipv4"
+			} else if ipVersion == 6 {
+				network.Type = "ipv6"
+			}
 		} else {
 			server.Domain = trimmedHost
 			if domainBreakdown != nil {
@@ -108,6 +79,23 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 				server.Subdomain = domainBreakdown.Subdomain
 				server.TopLevelDomain = domainBreakdown.TopLevelDomain
 			}
+		}
+	}
+
+	if serverTcpAddr, ok := request.Context().Value(http.LocalAddrContextKey).(*net.TCPAddr); ok {
+		if server == nil {
+			server = &Target{}
+		}
+		server.Ip = serverTcpAddr.IP.String()
+		server.Port = serverTcpAddr.Port
+
+		network.Transport = "tcp"
+		network.IanaNumber = "6"
+
+		if ipVersion := motmedelNet.GetIpVersion(&serverTcpAddr.IP); ipVersion == 4 {
+			network.Type = "ipv4"
+		} else if ipVersion == 6 {
+			network.Type = "ipv6"
 		}
 	}
 
@@ -119,22 +107,19 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 	}
 
 	var body *HttpBody
-	if extractBody {
-		data, err := io.ReadAll(request.Body)
-		if err != nil {
-			return nil, err
-		}
-		body = &HttpBody{
-			Bytes:   len(data),
-			Content: string(data),
-		}
+	if len(bodyData) != 0 {
+		body = &HttpBody{Bytes: len(bodyData), Content: string(bodyData)}
 	}
 
 	var client *Target
-	if request.RemoteAddr != "" {
-		clientIpAddress, clientPort, err := splitAddress(request.RemoteAddr)
+	if remoteAddr := request.RemoteAddr; remoteAddr != "" {
+		clientIpAddress, clientPort, err := motmedelNet.SplitAddress(remoteAddr)
 		if err != nil {
-			return nil, err
+			return nil, &motmedelErrors.InputError{
+				Message: "An error occurred when splitting a remote address.",
+				Cause:   err,
+				Input:   remoteAddr,
+			}
 		}
 		client = &Target{Ip: clientIpAddress, Port: clientPort}
 	}
@@ -175,5 +160,6 @@ func ParseHTTPRequest(request *http.Request, extractBody bool) (*Base, error) {
 		Server:    server,
 		Url:       url,
 		UserAgent: userAgent,
+		Network:   network,
 	}, nil
 }

@@ -1,0 +1,4 @@
+github.com/Motmedel/utils_go v0.0.47/go.mod h1:3Wry5+hEGzgzLRcBdpU8uhUUSAVJB7NzILiM7i1t7g4=
+github.com/Motmedel/utils_go/pkg/net/domain_breakdown v0.0.1/go.mod h1:VgjttTkSqVOXLWyp1RWMHDWh6i3gGUoEVQqJI0QyL9o=
+golang.org/x/net v0.29.0 h1:5ORfpBpCs4HzDYoodCDBbwHzdR5UrLBZ3sOnUJmFoHo=
+golang.org/x/net v0.29.0/go.mod h1:gLkgy8jTGERgjzMic6DS9+SP0ajcu6Xu3Orq/SpETg0=
