@@ -118,13 +118,6 @@ func ParseHttp(
 			password, _ = userInfo.Password()
 		}
 
-		var requestBody *HttpBody
-		var requestBodyMimeType string
-		if len(requestBodyData) != 0 {
-			requestBody = &HttpBody{Bytes: len(requestBodyData), Content: string(requestBodyData)}
-			requestBodyMimeType = http.DetectContentType(requestBodyData)
-		}
-
 		if remoteAddr := request.RemoteAddr; remoteAddr != "" {
 			clientIpAddress, clientPort, err := motmedelNet.SplitAddress(remoteAddr)
 			if err != nil {
@@ -159,39 +152,45 @@ func ParseHttp(
 		}
 
 		httpRequest = &HttpRequest{
-			Body:        requestBody,
 			ContentType: request.Header.Get("Content-Type"),
 			Method:      request.Method,
 			Referrer:    request.Referer(),
-			MimeType:    requestBodyMimeType,
 		}
 
 		httpVersion = fmt.Sprintf("%d.%d", request.ProtoMajor, request.ProtoMinor)
 	}
 
+	if len(requestBodyData) != 0 {
+		if httpRequest == nil {
+			httpRequest = &HttpRequest{}
+		}
+		httpRequest.Body = &HttpBody{Bytes: len(requestBodyData), Content: string(requestBodyData)}
+		httpRequest.MimeType = http.DetectContentType(requestBodyData)
+	}
+
 	var httpResponse *HttpResponse
 	if response != nil {
-		var responseBody *HttpBody
-		var responseBodyMimeType string
-		if len(responseBodyData) != 0 {
-			responseBody = &HttpBody{Bytes: len(responseBodyData), Content: string(responseBodyData)}
-			responseBodyMimeType = http.DetectContentType(responseBodyData)
-		}
 		httpResponse = &HttpResponse{
-			Body:        responseBody,
 			StatusCode:  response.StatusCode,
 			ContentType: response.Header.Get("Content-Type"),
-			MimeType:    responseBodyMimeType,
 		}
+	}
+
+	if len(responseBodyData) != 0 {
+		if httpResponse == nil {
+			httpResponse = &HttpResponse{}
+		}
+		httpResponse.Body = &HttpBody{Bytes: len(responseBodyData), Content: string(responseBodyData)}
+		httpResponse.MimeType = http.DetectContentType(requestBodyData)
 	}
 
 	var ecsHttp *Http
 	if httpRequest != nil || httpResponse != nil {
-		ecsHttp = &Http{
-			Request:  httpRequest,
-			Response: httpResponse,
-			Version:  httpVersion,
-		}
+		ecsHttp = &Http{Request: httpRequest, Response: httpResponse, Version: httpVersion}
+	}
+
+	if client == nil && ecsHttp == nil && server == nil && url == nil && userAgent == nil && network == nil {
+		return nil, nil
 	}
 
 	return &Base{
