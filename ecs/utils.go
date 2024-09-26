@@ -3,6 +3,7 @@ package ecs
 import (
 	"fmt"
 	motmedelErrors "github.com/Motmedel/utils_go/pkg/errors"
+	motmedelTypes "github.com/Motmedel/utils_go/pkg/http/types"
 	motmedelNet "github.com/Motmedel/utils_go/pkg/net"
 	"github.com/Motmedel/utils_go/pkg/net/domain_breakdown"
 	"net"
@@ -201,4 +202,12 @@ func ParseHttp(
 		UserAgent: userAgent,
 		Network:   network,
 	}, nil
+}
+
+func ParseHttpContext(httpContext *motmedelTypes.HttpContext) (*Base, error) {
+	if httpContext == nil {
+		return nil, nil
+	}
+
+	return ParseHttp(httpContext.Request, httpContext.RequestBody, httpContext.Response, httpContext.ResponseBody)
 }
