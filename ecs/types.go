@@ -257,6 +257,7 @@ type Event struct {
 	Start     string   `json:"start,omitempty"`
 	Timezone  string   `json:"timezone,omitempty"`
 	Type      []string `json:"type,omitempty"`
+	Url       string   `json:"url,omitempty"`
 }
 
 type File struct {
