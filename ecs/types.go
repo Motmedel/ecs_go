@@ -1,13 +1,14 @@
 package ecs
 
-type DomainBreakdown struct {
-	RegisteredDomain string `json:"registered_domain,omitempty"`
-	Subdomain        string `json:"subdomain,omitempty"`
-	TopLevelDomain   string `json:"top_level_domain,omitempty"`
+import "github.com/Motmedel/utils_go/pkg/net"
+
+type Body struct {
+	Bytes   int    `json:"bytes,omitempty"`
+	Content string `json:"content,omitempty"`
 }
 
 type Target struct {
-	DomainBreakdown
+	net.DomainBreakdown
 	Address string            `json:"address,omitempty"`
 	Bytes   int               `json:"bytes,omitempty"`
 	Domain  string            `json:"domain,omitempty"`
@@ -39,6 +40,8 @@ type Base struct {
 	Url           *Url           `json:"url,omitempty"`
 	UserAgent     *UserAgent     `json:"user_agent,omitempty"`
 	Vulnerability *Vulnerability `json:"vulnerability,omitempty"`
+	// NOTE: Custom
+	Whois *Whois `json:"whois,omitempty"`
 }
 
 type AgentBuild struct {
@@ -299,14 +302,9 @@ type Host struct {
 	Os           Os       `json:"os,omitempty"`
 }
 
-type HttpBody struct {
-	Bytes   int    `json:"bytes,omitempty"`
-	Content string `json:"content,omitempty"`
-}
-
 type HttpRequest struct {
-	Body  *HttpBody `json:"body,omitempty"`
-	Bytes int       `json:"bytes,omitempty"`
+	Body  *Body `json:"body,omitempty"`
+	Bytes int   `json:"bytes,omitempty"`
 	// NOTE: Custom
 	ContentType string `json:"content_type,omitempty"`
 	Id          string `json:"id,omitempty"`
@@ -316,8 +314,8 @@ type HttpRequest struct {
 }
 
 type HttpResponse struct {
-	Body  *HttpBody `json:"body,omitempty"`
-	Bytes int       `json:"bytes,omitempty"`
+	Body  *Body `json:"body,omitempty"`
+	Bytes int   `json:"bytes,omitempty"`
 	// NOTE: Custom
 	ContentType string `json:"content_type,omitempty"`
 	MimeType    string `json:"mime_type,omitempty"`
@@ -330,6 +328,22 @@ type Http struct {
 	Request  *HttpRequest  `json:"request,omitempty"`
 	Response *HttpResponse `json:"response,omitempty"`
 	Version  string        `json:"version,omitempty"`
+}
+
+type WhoisRequest struct {
+	Body *Body  `json:"body,omitempty"`
+	Id   string `json:"id,omitempty"`
+}
+
+type WhoisResponse struct {
+	Body *Body `json:"body,omitempty"`
+}
+
+// NOTE: Custom
+
+type Whois struct {
+	Request  *WhoisRequest  `json:"request,omitempty"`
+	Response *WhoisResponse `json:"response,omitempty"`
 }
 
 type Network struct {
@@ -476,7 +490,7 @@ type Tls struct {
 }
 
 type Url struct {
-	DomainBreakdown
+	net.DomainBreakdown
 	Domain    string `json:"domain,omitempty"`
 	Extension string `json:"extension,omitempty"`
 	Fragment  string `json:"fragment,omitempty"`

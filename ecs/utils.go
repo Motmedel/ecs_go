@@ -3,11 +3,13 @@ package ecs
 import (
 	"fmt"
 	motmedelErrors "github.com/Motmedel/utils_go/pkg/errors"
-	motmedelTypes "github.com/Motmedel/utils_go/pkg/http/types"
+	motmedelHttpTypes "github.com/Motmedel/utils_go/pkg/http/types"
 	motmedelNet "github.com/Motmedel/utils_go/pkg/net"
 	"github.com/Motmedel/utils_go/pkg/net/domain_breakdown"
+	motmedelWhoisTypes "github.com/Motmedel/utils_go/pkg/whois/types"
 	"net"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 )
@@ -119,6 +121,7 @@ func ParseHttp(
 			password, _ = userInfo.Password()
 		}
 
+		// TODO: Maybe I can use `parseTarget()`?
 		if remoteAddr := request.RemoteAddr; remoteAddr != "" {
 			clientIpAddress, clientPort, err := motmedelNet.SplitAddress(remoteAddr)
 			if err != nil {
@@ -165,7 +168,7 @@ func ParseHttp(
 		if httpRequest == nil {
 			httpRequest = &HttpRequest{}
 		}
-		httpRequest.Body = &HttpBody{Bytes: len(requestBodyData), Content: string(requestBodyData)}
+		httpRequest.Body = &Body{Bytes: len(requestBodyData), Content: string(requestBodyData)}
 		httpRequest.MimeType = http.DetectContentType(requestBodyData)
 	}
 
@@ -181,8 +184,8 @@ func ParseHttp(
 		if httpResponse == nil {
 			httpResponse = &HttpResponse{}
 		}
-		httpResponse.Body = &HttpBody{Bytes: len(responseBodyData), Content: string(responseBodyData)}
-		httpResponse.MimeType = http.DetectContentType(requestBodyData)
+		httpResponse.Body = &Body{Bytes: len(responseBodyData), Content: string(responseBodyData)}
+		httpResponse.MimeType = http.DetectContentType(responseBodyData)
 	}
 
 	var ecsHttp *Http
@@ -204,10 +207,114 @@ func ParseHttp(
 	}, nil
 }
 
-func ParseHttpContext(httpContext *motmedelTypes.HttpContext) (*Base, error) {
+func ParseHttpContext(httpContext *motmedelHttpTypes.HttpContext) (*Base, error) {
 	if httpContext == nil {
 		return nil, nil
 	}
 
 	return ParseHttp(httpContext.Request, httpContext.RequestBody, httpContext.Response, httpContext.ResponseBody)
+}
+
+func parseTarget(rawAddress string, rawIpAddress string, rawPort int) (*Target, error) {
+	var target *Target
+
+	if rawIpAddress != "" {
+		clientIpAddressUrl := fmt.Sprintf("fake://%s", rawIpAddress)
+		urlParsedClientIpAddress, err := url.Parse(clientIpAddressUrl)
+		if err != nil {
+			return nil, &motmedelErrors.InputError{
+				Message: "An error occurred when parsing the target IP address as an URL",
+				Cause:   err,
+				Input:   clientIpAddressUrl,
+			}
+		}
+
+		port := rawPort
+
+		if portString := urlParsedClientIpAddress.Port(); portString != "" {
+			port, err = strconv.Atoi(portString)
+			if err != nil {
+				return nil, &motmedelErrors.InputError{
+					Message: "An error occurred when parsing the target IP address URL port as an integer.",
+					Cause:   err,
+					Input:   portString,
+				}
+			}
+		}
+
+		ipAddress := urlParsedClientIpAddress.Hostname()
+		address := rawAddress
+		if address != "" {
+			address = address
+		}
+
+		target = &Target{Address: address, Domain: rawAddress, Ip: ipAddress, Port: port}
+	} else if rawAddress != "" {
+		target = &Target{
+			Address: rawAddress,
+			Domain:  rawAddress,
+			Port:    rawPort,
+		}
+	}
+
+	if target != nil {
+		if domain := target.Domain; domain != "" {
+			domainBreakdown := domain_breakdown.GetDomainBreakdown(domain)
+			if domainBreakdown != nil {
+				target.RegisteredDomain = domainBreakdown.RegisteredDomain
+				target.Subdomain = domainBreakdown.Subdomain
+				target.TopLevelDomain = domainBreakdown.TopLevelDomain
+			}
+		}
+	}
+
+	return target, nil
+}
+
+func ParseWhoisContext(whoisContext *motmedelWhoisTypes.WhoisContext) (*Base, error) {
+	if whoisContext == nil {
+		return nil, nil
+	}
+
+	client, err := parseTarget(whoisContext.ClientAddress, whoisContext.ClientIpAddress, whoisContext.ClientPort)
+	if err != nil {
+		return nil, &motmedelErrors.CauseError{
+			Message: "An error occurred when parsing client information.",
+			Cause:   err,
+		}
+	}
+	var requestBody *Body
+	if requestData := whoisContext.RequestData; len(requestData) > 0 {
+		requestBody = &Body{Bytes: len(requestData), Content: string(requestData)}
+	}
+
+	server, err := parseTarget(whoisContext.ServerAddress, whoisContext.ServerIpAddress, whoisContext.ServerPort)
+	if err != nil {
+		return nil, &motmedelErrors.CauseError{
+			Message: "An error occurred when parsing client information.",
+			Cause:   err,
+		}
+	}
+	var responseBody *Body
+	if responseData := whoisContext.ResponseData; len(responseData) > 0 {
+		responseBody = &Body{Bytes: len(responseData), Content: string(responseData)}
+	}
+
+	var whois *Whois
+	if requestBody != nil || responseBody != nil {
+		whois = &Whois{}
+		if requestBody != nil {
+			whois.Request = &WhoisRequest{Body: requestBody}
+		}
+		if responseBody != nil {
+			whois.Response = &WhoisResponse{Body: responseBody}
+		}
+	}
+
+	return &Base{
+		Client:  client,
+		Network: &Network{Protocol: "whois", Transport: whoisContext.Transport},
+		Server:  server,
+		Whois:   whois,
+	}, nil
 }
