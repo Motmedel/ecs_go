@@ -219,13 +219,13 @@ func parseTarget(rawAddress string, rawIpAddress string, rawPort int) (*Target, 
 	var target *Target
 
 	if rawIpAddress != "" {
-		clientIpAddressUrl := fmt.Sprintf("fake://%s", rawIpAddress)
-		urlParsedClientIpAddress, err := url.Parse(clientIpAddressUrl)
+		ipAddressUrl := fmt.Sprintf("fake://%s", rawIpAddress)
+		urlParsedClientIpAddress, err := url.Parse(ipAddressUrl)
 		if err != nil {
 			return nil, &motmedelErrors.InputError{
 				Message: "An error occurred when parsing the target IP address as an URL",
 				Cause:   err,
-				Input:   clientIpAddressUrl,
+				Input:   ipAddressUrl,
 			}
 		}
 
@@ -245,7 +245,7 @@ func parseTarget(rawAddress string, rawIpAddress string, rawPort int) (*Target, 
 		ipAddress := urlParsedClientIpAddress.Hostname()
 		address := rawAddress
 		if address != "" {
-			address = address
+			address = ipAddress
 		}
 
 		target = &Target{Address: address, Domain: rawAddress, Ip: ipAddress, Port: port}
