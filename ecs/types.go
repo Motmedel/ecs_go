@@ -2,6 +2,11 @@ package ecs
 
 import "github.com/Motmedel/utils_go/pkg/net"
 
+type HttpHeaders struct {
+	Normalized string `json:"normalized,omitempty"`
+	Original   string `json:"original,omitempty"`
+}
+
 type Body struct {
 	Bytes   int    `json:"bytes,omitempty"`
 	Content string `json:"content,omitempty"`
@@ -244,6 +249,7 @@ type Email struct {
 }
 
 type Event struct {
+	Action    string   `json:"action,omitempty"`
 	Category  []string `json:"category,omitempty"`
 	Code      string   `json:"code,omitempty"`
 	Created   string   `json:"created,omitempty"`
@@ -307,19 +313,21 @@ type HttpRequest struct {
 	Body  *Body `json:"body,omitempty"`
 	Bytes int   `json:"bytes,omitempty"`
 	// NOTE: Custom
-	ContentType string `json:"content_type,omitempty"`
-	Id          string `json:"id,omitempty"`
-	Method      string `json:"method,omitempty"`
-	MimeType    string `json:"mime_type,omitempty"`
-	Referrer    string `json:"referrer,omitempty"`
+	ContentType string       `json:"content_type,omitempty"`
+	HttpHeaders *HttpHeaders `json:"http_headers"`
+	Id          string       `json:"id,omitempty"`
+	Method      string       `json:"method,omitempty"`
+	MimeType    string       `json:"mime_type,omitempty"`
+	Referrer    string       `json:"referrer,omitempty"`
 }
 
 type HttpResponse struct {
 	Body  *Body `json:"body,omitempty"`
 	Bytes int   `json:"bytes,omitempty"`
 	// NOTE: Custom
-	ContentType string `json:"content_type,omitempty"`
-	MimeType    string `json:"mime_type,omitempty"`
+	ContentType string       `json:"content_type,omitempty"`
+	HttpHeaders *HttpHeaders `json:"http_headers,omitempty"`
+	MimeType    string       `json:"mime_type,omitempty"`
 	// NOTE: Custom
 	ReasonPhrase string `json:"reason_phrase,omitempty"`
 	StatusCode   int    `json:"status_code,omitempty"`
