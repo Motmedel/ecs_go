@@ -35,6 +35,7 @@ type Base struct {
 
 	Client        *Target        `json:"client,omitempty"`
 	Destination   *Target        `json:"destination,omitempty"`
+	Dns           *Dns           `json:"dns,omitempty"`
 	Error         *Error         `json:"error,omitempty"`
 	Event         *Event         `json:"event,omitempty"`
 	Http          *Http          `json:"http,omitempty"`
