@@ -38,6 +38,7 @@ type Base struct {
 	Error         *Error         `json:"error,omitempty"`
 	Event         *Event         `json:"event,omitempty"`
 	Http          *Http          `json:"http,omitempty"`
+	Related       *Related       `json:"related,omitempty"`
 	Rule          *Rule          `json:"rule,omitempty"`
 	Server        *Target        `json:"server,omitempty"`
 	Source        *Target        `json:"source,omitempty"`
@@ -45,6 +46,7 @@ type Base struct {
 	Url           *Url           `json:"url,omitempty"`
 	UserAgent     *UserAgent     `json:"user_agent,omitempty"`
 	Vulnerability *Vulnerability `json:"vulnerability,omitempty"`
+
 	// NOTE: Custom
 	Whois *Whois `json:"whois,omitempty"`
 }
