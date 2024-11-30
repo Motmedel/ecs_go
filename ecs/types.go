@@ -38,7 +38,9 @@ type Base struct {
 	Dns           *Dns           `json:"dns,omitempty"`
 	Error         *Error         `json:"error,omitempty"`
 	Event         *Event         `json:"event,omitempty"`
+	Host          *Host          `json:"host,omitempty"`
 	Http          *Http          `json:"http,omitempty"`
+	Log           *Log           `json:"log,omitempty"`
 	Related       *Related       `json:"related,omitempty"`
 	Rule          *Rule          `json:"rule,omitempty"`
 	Server        *Target        `json:"server,omitempty"`
@@ -252,24 +254,31 @@ type Email struct {
 }
 
 type Event struct {
-	Action    string   `json:"action,omitempty"`
-	Category  []string `json:"category,omitempty"`
-	Code      string   `json:"code,omitempty"`
-	Created   string   `json:"created,omitempty"`
-	Duration  int64    `json:"duration,omitempty"`
-	End       string   `json:"end,omitempty"`
-	Hash      string   `json:"hash,omitempty"`
-	Id        string   `json:"id,omitempty"`
-	Kind      string   `json:"kind,omitempty"`
-	Module    string   `json:"module,omitempty"`
-	Original  string   `json:"original,omitempty"`
-	Outcome   string   `json:"outcome,omitempty"`
-	RiskScore float64  `json:"risk_score,omitempty"`
-	Severity  int      `json:"severity,omitempty"`
-	Start     string   `json:"start,omitempty"`
-	Timezone  string   `json:"timezone,omitempty"`
-	Type      []string `json:"type,omitempty"`
-	Url       string   `json:"url,omitempty"`
+	Action        string   `json:"action,omitempty"`
+	AgentIdStatus string   `json:"agent_id_status,omitempty"`
+	Category      []string `json:"category,omitempty"`
+	Code          string   `json:"code,omitempty"`
+	Created       string   `json:"created,omitempty"`
+	Dataset       string   `json:"dataset,omitempty"`
+	Duration      int64    `json:"duration,omitempty"`
+	End           string   `json:"end,omitempty"`
+	Hash          string   `json:"hash,omitempty"`
+	Id            string   `json:"id,omitempty"`
+	Ingested      string   `json:"ingested,omitempty"`
+	Kind          string   `json:"kind,omitempty"`
+	Module        string   `json:"module,omitempty"`
+	Original      string   `json:"original,omitempty"`
+	Outcome       string   `json:"outcome,omitempty"`
+	Provider      string   `json:"provider,omitempty"`
+	Reason        string   `json:"reason,omitempty"`
+	Reference     string   `json:"reference,omitempty"`
+	RiskScore     float64  `json:"risk_score,omitempty"`
+	Sequence      int      `json:"sequence,omitempty"`
+	Severity      int      `json:"severity,omitempty"`
+	Start         string   `json:"start,omitempty"`
+	Timezone      string   `json:"timezone,omitempty"`
+	Type          []string `json:"type,omitempty"`
+	Url           string   `json:"url,omitempty"`
 }
 
 type File struct {
@@ -342,22 +351,6 @@ type Http struct {
 	Version  string        `json:"version,omitempty"`
 }
 
-type WhoisRequest struct {
-	Body *Body  `json:"body,omitempty"`
-	Id   string `json:"id,omitempty"`
-}
-
-type WhoisResponse struct {
-	Body *Body `json:"body,omitempty"`
-}
-
-// NOTE: Custom
-
-type Whois struct {
-	Request  *WhoisRequest  `json:"request,omitempty"`
-	Response *WhoisResponse `json:"response,omitempty"`
-}
-
 type Network struct {
 	Application string `json:"application,omitempty"`
 	Bytes       int64  `json:"bytes,omitempty"`
@@ -371,6 +364,51 @@ type Network struct {
 	Protocol    string `json:"protocol,omitempty"`
 	Transport   string `json:"transport,omitempty"`
 	Type        string `json:"type,omitempty"`
+}
+
+type LogOriginFile struct {
+	Line int    `json:"line,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+type LogFile struct {
+	Path string `json:"path,omitempty"`
+}
+
+type LogOrigin struct {
+	File     *LogOriginFile `json:"file,omitempty"`
+	Function string         `json:"function,omitempty"`
+	// NOTE: Custom
+	Process *Process `json:"process,omitempty"`
+}
+
+type LogSyslogFacility struct {
+	Code int    `json:"code,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+type LogSyslogSeverity struct {
+	Code int    `json:"code,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+type LogSyslog struct {
+	Appname        string             `json:"appname,omitempty"`
+	Facility       *LogSyslogFacility `json:"facility,omitempty"`
+	Hostname       string             `json:"hostname,omitempty"`
+	Msgid          string             `json:"msgid,omitempty"`
+	Priority       int                `json:"priority,omitempty"`
+	Procid         string             `json:"procid,omitempty"`
+	StructuredData map[string]any     `json:"structured_data,omitempty"`
+	Version        string             `json:"version,omitempty"`
+}
+
+type Log struct {
+	LogFile *LogFile   `json:"file,omitempty"`
+	Level   string     `json:"level,omitempty"`
+	Logger  string     `json:"logger,omitempty"`
+	Origin  *LogOrigin `json:"origin,omitempty"`
+	Syslog  *LogSyslog `json:"syslog,omitempty"`
 }
 
 type Observer struct {
@@ -550,6 +588,26 @@ type Vulnerability struct {
 	Scanner        *VulnerabilityScanner `json:"scanner,omitempty"`
 	Score          *VulnerabilityScore   `json:"score,omitempty"`
 	Severity       string                `json:"severity,omitempty"`
+}
+
+// NOTE: Custom
+
+type WhoisRequest struct {
+	Body *Body  `json:"body,omitempty"`
+	Id   string `json:"id,omitempty"`
+}
+
+// NOTE: Custom
+
+type WhoisResponse struct {
+	Body *Body `json:"body,omitempty"`
+}
+
+// NOTE: Custom
+
+type Whois struct {
+	Request  *WhoisRequest  `json:"request,omitempty"`
+	Response *WhoisResponse `json:"response,omitempty"`
 }
 
 type X509 struct {
