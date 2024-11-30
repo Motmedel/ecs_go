@@ -204,7 +204,7 @@ type DnsQuestion struct {
 
 type Dns struct {
 	Answers      []*DnsAnswer `json:"answers,omitempty"`
-	Headers      any          `json:"headers,omitempty"`
+	HeaderFlags  any          `json:"header_flags,omitempty"`
 	Id           string       `json:"id,omitempty"`
 	OpCode       string       `json:"op_code,omitempty"`
 	Question     *DnsQuestion `json:"question,omitempty"`
