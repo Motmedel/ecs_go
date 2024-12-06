@@ -50,8 +50,9 @@ type Base struct {
 	UserAgent     *UserAgent     `json:"user_agent,omitempty"`
 	Vulnerability *Vulnerability `json:"vulnerability,omitempty"`
 
-	// NOTE: Custom
+	// NOTE: Custom namespaces
 	Whois *Whois `json:"whois,omitempty"`
+	Tcp   *Tcp   `json:"tcp,omitempty"`
 }
 
 type AgentBuild struct {
@@ -480,6 +481,14 @@ type Service struct {
 	Name  string `json:"name,omitempty"`
 	State string `json:"state,omitempty"`
 	Type  string `json:"type,omitempty"`
+}
+
+// NOTE: Custom
+
+type Tcp struct {
+	Flags                 []string `json:"flags,omitempty"`
+	AcknowledgementNumber *int     `json:"acknowledgement_number,omitempty"`
+	SequenceNumber        *int     `json:"sequence_number,omitempty"`
 }
 
 type Threat struct {
