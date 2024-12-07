@@ -48,6 +48,7 @@ type Base struct {
 	Source        *Target        `json:"source,omitempty"`
 	Network       *Network       `json:"network,omitempty"`
 	Url           *Url           `json:"url,omitempty"`
+	User          *User          `json:"user,omitempty"`
 	UserAgent     *UserAgent     `json:"user_agent,omitempty"`
 	Vulnerability *Vulnerability `json:"vulnerability,omitempty"`
 
