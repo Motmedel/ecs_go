@@ -38,6 +38,7 @@ type Base struct {
 	Dns           *Dns           `json:"dns,omitempty"`
 	Error         *Error         `json:"error,omitempty"`
 	Event         *Event         `json:"event,omitempty"`
+	Group         *Group         `json:"group,omitempty"`
 	Host          *Host          `json:"host,omitempty"`
 	Http          *Http          `json:"http,omitempty"`
 	Log           *Log           `json:"log,omitempty"`
