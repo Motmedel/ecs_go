@@ -41,6 +41,7 @@ type Base struct {
 	Host          *Host          `json:"host,omitempty"`
 	Http          *Http          `json:"http,omitempty"`
 	Log           *Log           `json:"log,omitempty"`
+	Observer      *Observer      `json:"observer,omitempty"`
 	Related       *Related       `json:"related,omitempty"`
 	Rule          *Rule          `json:"rule,omitempty"`
 	Server        *Target        `json:"server,omitempty"`
@@ -352,6 +353,12 @@ type Http struct {
 	Version  string        `json:"version,omitempty"`
 }
 
+type Interface struct {
+	Alias string `json:"alias,omitempty"`
+	Id    string `json:"id,omitempty"`
+	Name  string `json:"name,omitempty"`
+}
+
 type Network struct {
 	Application string `json:"application,omitempty"`
 	Bytes       int64  `json:"bytes,omitempty"`
@@ -412,19 +419,41 @@ type Log struct {
 	Syslog  *LogSyslog `json:"syslog,omitempty"`
 }
 
+type ObserverIngressEgress struct {
+	Interface *Interface `json:"interface,omitempty"`
+	Zone      string     `json:"zone,omitempty"`
+}
+
 type Observer struct {
-	Hostname     string `json:"hostname,omitempty"`
-	Ip           string `json:"ip,omitempty"`
-	Mac          string `json:"mac,omitempty"`
-	SerialNumber string `json:"serial_number,omitempty"`
-	Type         string `json:"type,omitempty"`
-	Vendor       string `json:"vendor,omitempty"`
-	Version      string `json:"version,omitempty"`
+	Egress *ObserverIngressEgress `json:"egress,omitempty"`
+	// NOTE: Custom
+	Hook         string                 `json:"hook,omitempty"`
+	Hostname     string                 `json:"hostname,omitempty"`
+	Ingress      *ObserverIngressEgress `json:"ingress,omitempty"`
+	Ip           string                 `json:"ip,omitempty"`
+	Mac          string                 `json:"mac,omitempty"`
+	Name         string                 `json:"name,omitempty"`
+	Os           *Os                    `json:"os,omitempty"`
+	Product      string                 `json:"product,omitempty"`
+	SerialNumber string                 `json:"serial_number,omitempty"`
+	Type         string                 `json:"type,omitempty"`
+	Vendor       string                 `json:"vendor,omitempty"`
+	Version      string                 `json:"version,omitempty"`
 }
 
 type Organization struct {
 	Id   string `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
+}
+
+type Os struct {
+	Family   string `json:"family,omitempty"`
+	Full     string `json:"full,omitempty"`
+	Kernel   string `json:"kernel,omitempty"`
+	Name     string `json:"name,omitempty"`
+	Platform string `json:"platform,omitempty"`
+	Type     string `json:"type,omitempty"`
+	Version  string `json:"version,omitempty"`
 }
 
 type Process struct {
@@ -641,14 +670,4 @@ type X509 struct {
 		StateOrProvinceName string `json:"state_or_province_name,omitempty"`
 	} `json:"subject,omitempty"`
 	VersionNumber int `json:"version_number,omitempty"`
-}
-
-type Os struct {
-	Family   string `json:"family,omitempty"`
-	Full     string `json:"full,omitempty"`
-	Kernel   string `json:"kernel,omitempty"`
-	Name     string `json:"name,omitempty"`
-	Platform string `json:"platform,omitempty"`
-	Type     string `json:"type,omitempty"`
-	Version  string `json:"version,omitempty"`
 }
