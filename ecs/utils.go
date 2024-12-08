@@ -7,6 +7,7 @@ import (
 	motmedelNet "github.com/Motmedel/utils_go/pkg/net"
 	"github.com/Motmedel/utils_go/pkg/net/domain_breakdown"
 	motmedelWhoisTypes "github.com/Motmedel/utils_go/pkg/whois/types"
+	"log/slog"
 	"net"
 	"net/http"
 	"net/url"
@@ -317,4 +318,42 @@ func ParseWhoisContext(whoisContext *motmedelWhoisTypes.WhoisContext) (*Base, er
 		Server:  server,
 		Whois:   whois,
 	}, nil
+}
+
+func EventCreatedReplaceAttr(groups []string, attr slog.Attr) slog.Attr {
+	if len(groups) > 0 {
+		return attr
+	}
+
+	switch attr.Key {
+	case slog.TimeKey:
+		return slog.Group("event", slog.Any("created", attr.Value))
+	case slog.LevelKey:
+		if value, ok := attr.Value.Any().(string); ok {
+			return slog.Group("log", slog.String("level", strings.ToLower(value)))
+		}
+	case slog.MessageKey:
+		attr.Key = "message"
+	}
+
+	return attr
+}
+
+func TimestampReplaceAttr(groups []string, attr slog.Attr) slog.Attr {
+	if len(groups) > 0 {
+		return attr
+	}
+
+	switch attr.Key {
+	case slog.TimeKey:
+		attr.Key = "@timestamp"
+	case slog.LevelKey:
+		if value, ok := attr.Value.Any().(string); ok {
+			return slog.Group("log", slog.String("level", strings.ToLower(value)))
+		}
+	case slog.MessageKey:
+		attr.Key = "message"
+	}
+
+	return attr
 }
