@@ -202,8 +202,10 @@ type DnsAnswer struct {
 }
 
 type DnsQuestion struct {
-	Name string `json:"name,omitempty"`
-	Type string `json:"type,omitempty"`
+	net.DomainBreakdown
+	Class string `json:"class,omitempty"`
+	Name  string `json:"name,omitempty"`
+	Type  string `json:"type,omitempty"`
 }
 
 type Dns struct {
