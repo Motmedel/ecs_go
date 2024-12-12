@@ -43,6 +43,7 @@ type Base struct {
 	Http          *Http          `json:"http,omitempty"`
 	Log           *Log           `json:"log,omitempty"`
 	Observer      *Observer      `json:"observer,omitempty"`
+	Process       *Process       `json:"process,omitempty"`
 	Related       *Related       `json:"related,omitempty"`
 	Rule          *Rule          `json:"rule,omitempty"`
 	Server        *Target        `json:"server,omitempty"`
@@ -460,21 +461,41 @@ type Os struct {
 	Version  string `json:"version,omitempty"`
 }
 
+type ProcessIo struct {
+	Text string `json:"text,omitempty"`
+}
+
+type ProcessThreadCapabilities struct {
+	Effective []string `json:"effective,omitempty"`
+	Permitted []string `json:"permitted,omitempty"`
+}
+
+type ProcessThread struct {
+	Id   int    `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
 type Process struct {
-	Args        []string          `json:"args,omitempty"`
-	CommandLine string            `json:"command_line,omitempty"`
-	End         string            `json:"end,omitempty"`
-	Env         map[string]string `json:"env,omitempty"`
-	ExitCode    int               `json:"exit_code,omitempty"`
-	Name        string            `json:"name,omitempty"`
-	Pid         int               `json:"pid,omitempty"`
-	Ppid        int               `json:"ppid,omitempty"`
-	Start       string            `json:"start,omitempty"`
-	Thread      struct {
-		Count int `json:"count,omitempty"`
-	} `json:"thread,omitempty"`
-	Title string `json:"title,omitempty"`
-	Uid   string `json:"uid,omitempty"`
+	Args             []string       `json:"args,omitempty"`
+	ArgsCount        int            `json:"args_count,omitempty"`
+	CommandLine      string         `json:"command_line,omitempty"`
+	End              string         `json:"end,omitempty"`
+	EnvVars          []string       `json:"env_vars,omitempty"`
+	Executable       string         `json:"executable,omitempty"`
+	ExitCode         int            `json:"exit_code,omitempty"`
+	Group            *Group         `json:"group,omitempty"`
+	Interactive      bool           `json:"interactive,omitempty"`
+	Io               *ProcessIo     `json:"io,omitempty"`
+	Name             string         `json:"name,omitempty"`
+	Parent           *Process       `json:"parent,omitempty"`
+	Pid              int            `json:"pid,omitempty"`
+	Previous         *Process       `json:"previous,omitempty"`
+	Start            string         `json:"start,omitempty"`
+	Threat           *ProcessThread `json:"threat,omitempty"`
+	Title            string         `json:"title,omitempty"`
+	Uptime           int            `json:"uptime,omitempty"`
+	User             *User          `json:"user,omitempty"`
+	WorkingDirectory string         `json:"working_directory,omitempty"`
 }
 
 type Registry struct {
