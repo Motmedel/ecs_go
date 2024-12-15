@@ -543,6 +543,7 @@ type Tcp struct {
 	Flags                 []string `json:"flags,omitempty"`
 	AcknowledgementNumber *int     `json:"acknowledgement_number,omitempty"`
 	SequenceNumber        *int     `json:"sequence_number,omitempty"`
+	State                 string   `json:"state,omitempty"`
 }
 
 type Threat struct {
