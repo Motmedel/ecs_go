@@ -39,6 +39,7 @@ type Base struct {
 	Dns           *Dns           `json:"dns,omitempty"`
 	Error         *Error         `json:"error,omitempty"`
 	Event         *Event         `json:"event,omitempty"`
+	File          *File          `json:"file,omitempty"`
 	Group         *Group         `json:"group,omitempty"`
 	Host          *Host          `json:"host,omitempty"`
 	Http          *Http          `json:"http,omitempty"`
@@ -310,6 +311,7 @@ type File struct {
 	Inode string `json:"inode,omitempty"`
 	Mode  string `json:"mode,omitempty"`
 	Mtime string `json:"mtime,omitempty"`
+	Name  string `json:"name,omitempty"`
 	Owner string `json:"owner,omitempty"`
 	Path  string `json:"path,omitempty"`
 	Size  int64  `json:"size,omitempty"`
@@ -578,6 +580,12 @@ type Threat struct {
 		Name      string `json:"name,omitempty"`
 		Reference string `json:"reference,omitempty"`
 	} `json:"technique,omitempty"`
+	Group struct {
+		Alias	 	string `json:"alias,omitempty"`
+		Id	 	string `json:"id,omitempty"`
+		Name	 	string `json:"name,omitempty"`
+		Reference	string `json:"reference,omitempty"`
+	} `json:"group,omitempty"`
 }
 
 type Tls struct {
