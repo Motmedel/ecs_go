@@ -44,6 +44,7 @@ type Base struct {
 	Log           *Log           `json:"log,omitempty"`
 	Observer      *Observer      `json:"observer,omitempty"`
 	Process       *Process       `json:"process,omitempty"`
+	Registry      *Registry      `json:"process,omitempty"`
 	Related       *Related       `json:"related,omitempty"`
 	Rule          *Rule          `json:"rule,omitempty"`
 	Server        *Target        `json:"server,omitempty"`
