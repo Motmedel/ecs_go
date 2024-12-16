@@ -51,6 +51,7 @@ type Base struct {
 	Rule          *Rule          `json:"rule,omitempty"`
 	Server        *Target        `json:"server,omitempty"`
 	Source        *Target        `json:"source,omitempty"`
+	Threat        *Threat        `json:"threat,omitempty"`
 	Network       *Network       `json:"network,omitempty"`
 	Url           *Url           `json:"url,omitempty"`
 	User          *User          `json:"user,omitempty"`
