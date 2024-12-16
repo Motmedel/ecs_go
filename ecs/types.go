@@ -34,6 +34,7 @@ type Base struct {
 	Tags      string            `json:"tags,omitempty"`
 
 	Client        *Target        `json:"client,omitempty"`
+	Cloud         *Cloud         `json:"cloud,omitempty"`
 	Destination   *Target        `json:"destination,omitempty"`
 	Dns           *Dns           `json:"dns,omitempty"`
 	Error         *Error         `json:"error,omitempty"`
