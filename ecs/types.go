@@ -292,6 +292,17 @@ type Event struct {
 	Url           string   `json:"url,omitempty"`
 }
 
+type Hash struct {
+	Cdhash string `json:"cdhash,omitempty"`
+	Md5    string `json:"md5,omitempty"`
+	Sha1   string `json:"sha1,omitempty"`
+	Sha256 string `json:"sha256,omitempty"`
+	Sha384 string `json:"sha384,omitempty"`
+	Sha512 string `json:"sha512,omitempty"`
+	Ssdeep string `json:"ssdeep,omitempty"`
+	Tlsh   string `json:"tlsh,omitempty"`
+}
+
 type File struct {
 	Accessed    string   `json:"accessed,omitempty"`
 	Attributes  []string `json:"attributes,omitempty"`
@@ -303,21 +314,16 @@ type File struct {
 	Extension   string   `json:"extension,omitempty"`
 	Gid         string   `json:"gid,omitempty"`
 	Group       string   `json:"group,omitempty"`
-	Hash        struct {
-		Md5    string `json:"md5,omitempty"`
-		Sha1   string `json:"sha1,omitempty"`
-		Sha256 string `json:"sha256,omitempty"`
-		Sha512 string `json:"sha512,omitempty"`
-	} `json:"hash,omitempty"`
-	Inode string `json:"inode,omitempty"`
-	Mode  string `json:"mode,omitempty"`
-	Mtime string `json:"mtime,omitempty"`
-	Name  string `json:"name,omitempty"`
-	Owner string `json:"owner,omitempty"`
-	Path  string `json:"path,omitempty"`
-	Size  int64  `json:"size,omitempty"`
-	Type  string `json:"type,omitempty"`
-	Uid   string `json:"uid,omitempty"`
+	Hash        *Hash    `json:"hash,omitempty"`
+	Inode       string   `json:"inode,omitempty"`
+	Mode        string   `json:"mode,omitempty"`
+	Mtime       string   `json:"mtime,omitempty"`
+	Name        string   `json:"name,omitempty"`
+	Owner       string   `json:"owner,omitempty"`
+	Path        string   `json:"path,omitempty"`
+	Size        int64    `json:"size,omitempty"`
+	Type        string   `json:"type,omitempty"`
+	Uid         string   `json:"uid,omitempty"`
 }
 
 type Host struct {
@@ -496,7 +502,7 @@ type Process struct {
 	Pid              int            `json:"pid,omitempty"`
 	Previous         *Process       `json:"previous,omitempty"`
 	Start            string         `json:"start,omitempty"`
-	Threat           *ProcessThread `json:"threat,omitempty"`
+	Thread           *ProcessThread `json:"thread,omitempty"`
 	Title            string         `json:"title,omitempty"`
 	Uptime           int            `json:"uptime,omitempty"`
 	User             *User          `json:"user,omitempty"`
@@ -551,42 +557,95 @@ type Tcp struct {
 	State                 string   `json:"state,omitempty"`
 }
 
+type ThreatGroup struct {
+	Alias     []string `json:"alias,omitempty"`
+	Id        string   `json:"id,omitempty"`
+	Name      string   `json:"name,omitempty"`
+	Reference string   `json:"reference,omitempty"`
+}
+
+type ThreatFeed struct {
+	Name      string `json:"name,omitempty"`
+	Reference string `json:"reference,omitempty"`
+}
+
+type ThreatTechnique struct {
+	Id           []string         `json:"id,omitempty"`
+	Name         []string         `json:"name,omitempty"`
+	Reference    []string         `json:"reference,omitempty"`
+	Subtechnique *ThreatTechnique `json:"subtechnique,omitempty"`
+}
+
+type ThreatTactic struct {
+	Id        []string `json:"id,omitempty"`
+	Name      []string `json:"name,omitempty"`
+	Reference []string `json:"reference,omitempty"`
+}
+
+type ThreatSoftware struct {
+	Alias     string   `json:"alias,omitempty"`
+	Id        string   `json:"id,omitempty"`
+	Name      string   `json:"name,omitempty"`
+	Platforms []string `json:"platforms,omitempty"`
+	Reference string   `json:"reference,omitempty"`
+	Type      string   `json:"type,omitempty"`
+}
+
+type ThreatIndicatorMarking struct {
+	Tlp        string `json:"tlp,omitempty"`
+	TlpVersion string `json:"tlp_version,omitempty"`
+}
+
+type ThreatIndicatorEmail struct {
+	Address string `json:"address,omitempty"`
+}
+
+type ThreatIndicator struct {
+	Confidence   string                  `json:"confidence,omitempty"`
+	Description  string                  `json:"description,omitempty"`
+	Email        *ThreatIndicatorEmail   `json:"email,omitempty"`
+	File         *File                   `json:"file,omitempty"`
+	Geo          *Geo                    `json:"geo,omitempty"`
+	FirstSeen    string                  `json:"first_seen,omitempty"`
+	Id           string                  `json:"id,omitempty"`
+	Ip           string                  `json:"ip,omitempty"`
+	LastSeen     string                  `json:"last_seen,omitempty"`
+	Marking      *ThreatIndicatorMarking `json:"marking,omitempty"`
+	ModifiedAt   string                  `json:"modified_at,omitempty"`
+	Name         string                  `json:"name,omitempty"`
+	Port         *int                    `json:"port,omitempty"`
+	Provider     string                  `json:"provider,omitempty"`
+	Reference    string                  `json:"reference,omitempty"`
+	Registry     *Registry               `json:"registry,omitempty"`
+	ScannerStats *int                    `json:"scanner_stats,omitempty"`
+	Sightings    *int                    `json:"sightings,omitempty"`
+	Type         string                  `json:"type,omitempty"`
+	Url          *Url                    `json:"url,omitempty"`
+}
+
+type ThreatEnrichmentMatched struct {
+	Atomic   string `json:"atomic,omitempty"`
+	Field    string `json:"field,omitempty"`
+	Id       string `json:"id,omitempty"`
+	Index    string `json:"index,omitempty"`
+	Occurred string `json:"occurred,omitempty"`
+	Type     string `json:"type,omitempty"`
+}
+
+type ThreatEnrichment struct {
+	Indicator *ThreatIndicator         `json:"indicator,omitempty"`
+	Matched   *ThreatEnrichmentMatched `json:"matched,omitempty"`
+}
+
 type Threat struct {
-	Framework string `json:"framework,omitempty"`
-	Indicator struct {
-		Confidence  string `json:"confidence,omitempty"`
-		Description string `json:"description,omitempty"`
-		Email       struct {
-			Address string `json:"address,omitempty"`
-		} `json:"email,omitempty"`
-		File struct {
-			Hash struct {
-				Md5    string `json:"md5,omitempty"`
-				Sha1   string `json:"sha1,omitempty"`
-				Sha256 string `json:"sha256,omitempty"`
-			} `json:"hash,omitempty"`
-			Path string `json:"path,omitempty"`
-		} `json:"file,omitempty"`
-		Ip   string `json:"ip,omitempty"`
-		Type string `json:"type,omitempty"`
-		Url  *Url   `json:"url,omitempty"`
-	} `json:"indicator,omitempty"`
-	Tactic struct {
-		Id        string `json:"id,omitempty"`
-		Name      string `json:"name,omitempty"`
-		Reference string `json:"reference,omitempty"`
-	} `json:"tactic,omitempty"`
-	Technique struct {
-		Id        string `json:"id,omitempty"`
-		Name      string `json:"name,omitempty"`
-		Reference string `json:"reference,omitempty"`
-	} `json:"technique,omitempty"`
-	Group struct {
-		Alias	 	string `json:"alias,omitempty"`
-		Id	 	string `json:"id,omitempty"`
-		Name	 	string `json:"name,omitempty"`
-		Reference	string `json:"reference,omitempty"`
-	} `json:"group,omitempty"`
+	Enrichments []*ThreatEnrichment `json:"enrichments,omitempty"`
+	Feed        *ThreatFeed         `json:"feed,omitempty"`
+	Framework   string              `json:"framework,omitempty"`
+	Group       *ThreatGroup        `json:"group,omitempty"`
+	Indicator   *ThreatIndicator    `json:"indicator,omitempty"`
+	Software    *ThreatSoftware     `json:"software,omitempty"`
+	Tactic      *ThreatTactic       `json:"tactic,omitempty"`
+	Technique   *ThreatTechnique    `json:"technique,omitempty"`
 }
 
 type Tls struct {
