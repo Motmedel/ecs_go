@@ -378,16 +378,17 @@ type Interface struct {
 type Network struct {
 	Application string `json:"application,omitempty"`
 	Bytes       int64  `json:"bytes,omitempty"`
-	CommunityId string `json:"community_id,omitempty"`
-	Direction   string `json:"direction,omitempty"`
-	ForwardedIp string `json:"forwarded_ip,omitempty"`
-	IanaNumber  string `json:"iana_number,omitempty"`
-	Inner       any    `json:"inner,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Packets     int64  `json:"packets,omitempty"`
-	Protocol    string `json:"protocol,omitempty"`
-	Transport   string `json:"transport,omitempty"`
-	Type        string `json:"type,omitempty"`
+	// NOTE: Made into an array to be able to capture both Source-Destination and Client-Server, which can differ.
+	CommunityId []string `json:"community_id,omitempty"`
+	Direction   string   `json:"direction,omitempty"`
+	ForwardedIp string   `json:"forwarded_ip,omitempty"`
+	IanaNumber  string   `json:"iana_number,omitempty"`
+	Inner       any      `json:"inner,omitempty"`
+	Name        string   `json:"name,omitempty"`
+	Packets     int64    `json:"packets,omitempty"`
+	Protocol    string   `json:"protocol,omitempty"`
+	Transport   string   `json:"transport,omitempty"`
+	Type        string   `json:"type,omitempty"`
 }
 
 type LogOriginFile struct {
