@@ -183,16 +183,17 @@ func ParseHttp(
 				protocolNumber, _ := strconv.Atoi(network.IanaNumber)
 
 				if serverIp != nil && clientIp != nil && serverPort != 0 && clientPort != 0 && protocolNumber != 0 {
-					network.CommunityId = append(
-						network.CommunityId,
-						motmedelNetCommunityId.MakeFlowTupleHash(
-							serverIp,
-							clientIp,
-							uint16(serverPort),
-							uint16(clientPort),
-							uint8(protocolNumber),
-						),
+					communityId := motmedelNetCommunityId.MakeFlowTupleHash(
+						serverIp,
+						clientIp,
+						uint16(serverPort),
+						uint16(clientPort),
+						uint8(protocolNumber),
 					)
+
+					if communityId != "" {
+						network.CommunityId = append(network.CommunityId, communityId)
+					}
 				}
 			}
 		}
@@ -389,4 +390,35 @@ func TimestampReplaceAttr(groups []string, attr slog.Attr) slog.Attr {
 	}
 
 	return attr
+}
+
+func CommunityIdFromTargets(sourceTarget *Target, destinationTarget *Target, protocolNumber int) string {
+	if sourceTarget == nil {
+		return ""
+	}
+
+	if destinationTarget == nil {
+		return ""
+	}
+
+	if protocolNumber == 0 {
+		return ""
+	}
+
+	sourceTargetIp := net.ParseIP(sourceTarget.Ip)
+	destinationTargetIp := net.ParseIP(destinationTarget.Ip)
+	sourceTargetPort := sourceTarget.Port
+	destinationTargetPort := destinationTarget.Port
+
+	if sourceTargetIp == nil || destinationTargetIp == nil || sourceTargetPort == 0 || destinationTargetPort == 0 {
+		return ""
+	}
+
+	return motmedelNetCommunityId.MakeFlowTupleHash(
+		sourceTargetIp,
+		destinationTargetIp,
+		uint16(sourceTargetPort),
+		uint16(destinationTargetPort),
+		uint8(protocolNumber),
+	)
 }
