@@ -5,6 +5,7 @@ import (
 	motmedelErrors "github.com/Motmedel/utils_go/pkg/errors"
 	motmedelHttpTypes "github.com/Motmedel/utils_go/pkg/http/types"
 	motmedelNet "github.com/Motmedel/utils_go/pkg/net"
+	motmedelNetCommunityId "github.com/Motmedel/utils_go/pkg/net/community_id"
 	"github.com/Motmedel/utils_go/pkg/net/domain_breakdown"
 	motmedelWhoisTypes "github.com/Motmedel/utils_go/pkg/whois/types"
 	"log/slog"
@@ -48,7 +49,7 @@ func ParseHttp(
 	var client *Target
 	var httpVersion string
 	var server *Target
-	var url *Url
+	var ecsUrl *Url
 	var userAgent *UserAgent
 
 	var httpRequest *HttpRequest
@@ -105,9 +106,6 @@ func ParseHttp(
 			server.Ip = serverTcpAddr.IP.String()
 			server.Port = serverTcpAddr.Port
 
-			network.Transport = "tcp"
-			network.IanaNumber = "6"
-
 			if ipVersion := motmedelNet.GetIpVersion(&serverTcpAddr.IP); ipVersion == 4 {
 				network.Type = "ipv4"
 			} else if ipVersion == 6 {
@@ -139,7 +137,7 @@ func ParseHttp(
 			userAgent = &UserAgent{Original: userAgentOriginal}
 		}
 
-		url = &Url{
+		ecsUrl = &Url{
 			Domain:   host,
 			Fragment: requestUrl.Fragment,
 			Original: originalUrl,
@@ -151,9 +149,9 @@ func ParseHttp(
 			Username: username,
 		}
 		if domainBreakdown != nil {
-			url.RegisteredDomain = domainBreakdown.RegisteredDomain
-			url.Subdomain = domainBreakdown.Subdomain
-			url.TopLevelDomain = domainBreakdown.TopLevelDomain
+			ecsUrl.RegisteredDomain = domainBreakdown.RegisteredDomain
+			ecsUrl.Subdomain = domainBreakdown.Subdomain
+			ecsUrl.TopLevelDomain = domainBreakdown.TopLevelDomain
 		}
 
 		httpRequest = &HttpRequest{
@@ -162,7 +160,42 @@ func ParseHttp(
 			Referrer:    request.Referer(),
 		}
 
-		httpVersion = fmt.Sprintf("%d.%d", request.ProtoMajor, request.ProtoMinor)
+		httpVersionMajor := request.ProtoMajor
+		httpVersionMinor := request.ProtoMinor
+
+		if httpVersionMajor != 0 || httpVersionMinor != 0 {
+			httpVersion = fmt.Sprintf("%d.%d", request.ProtoMajor, request.ProtoMinor)
+
+			if strings.HasPrefix(httpVersion, "3.") {
+				network.Transport = "udp"
+				network.IanaNumber = "17"
+			} else {
+				network.Transport = "tcp"
+				network.IanaNumber = "6"
+			}
+
+			if server != nil && client != nil {
+				serverIp := net.ParseIP(server.Ip)
+				clientIp := net.ParseIP(client.Ip)
+				serverPort := server.Port
+				clientPort := client.Port
+
+				protocolNumber, _ := strconv.Atoi(network.IanaNumber)
+
+				if serverIp != nil && clientIp != nil && serverPort != 0 && clientPort != 0 && protocolNumber != 0 {
+					network.CommunityId = append(
+						network.CommunityId,
+						motmedelNetCommunityId.MakeFlowTupleHash(
+							serverIp,
+							clientIp,
+							uint16(serverPort),
+							uint16(clientPort),
+							uint8(protocolNumber),
+						),
+					)
+				}
+			}
+		}
 	}
 
 	if len(requestBodyData) != 0 {
@@ -194,7 +227,7 @@ func ParseHttp(
 		ecsHttp = &Http{Request: httpRequest, Response: httpResponse, Version: httpVersion}
 	}
 
-	if client == nil && ecsHttp == nil && server == nil && url == nil && userAgent == nil && network == nil {
+	if client == nil && ecsHttp == nil && server == nil && ecsUrl == nil && userAgent == nil && network == nil {
 		return nil, nil
 	}
 
@@ -202,7 +235,7 @@ func ParseHttp(
 		Client:    client,
 		Http:      ecsHttp,
 		Server:    server,
-		Url:       url,
+		Url:       ecsUrl,
 		UserAgent: userAgent,
 		Network:   network,
 	}, nil
