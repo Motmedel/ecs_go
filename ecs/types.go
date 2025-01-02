@@ -510,16 +510,18 @@ type Process struct {
 	WorkingDirectory string         `json:"working_directory,omitempty"`
 }
 
+type RegistryData struct {
+	Bytes   string   `json:"bytes,omitempty"`
+	Strings []string `json:"strings,omitempty"`
+	Type    string   `json:"type,omitempty"`
+}
+
 type Registry struct {
-	Data struct {
-		Bytes   int64    `json:"bytes,omitempty"`
-		Strings []string `json:"strings,omitempty"`
-		Type    string   `json:"type,omitempty"`
-	} `json:"data,omitempty"`
-	Hive  string `json:"hive,omitempty"`
-	Key   string `json:"key,omitempty"`
-	Path  string `json:"path,omitempty"`
-	Value string `json:"value,omitempty"`
+	Data  *RegistryData `json:"data,omitempty"`
+	Hive  string        `json:"hive,omitempty"`
+	Key   string        `json:"key,omitempty"`
+	Path  string        `json:"path,omitempty"`
+	Value string        `json:"value,omitempty"`
 }
 
 type Related struct {
