@@ -33,7 +33,7 @@ type Base struct {
 	Timestamp string            `json:"@timestamp,omitempty"`
 	Labels    map[string]string `json:"labels,omitempty"`
 	Message   string            `json:"message,omitempty"`
-	Tags      string            `json:"tags,omitempty"`
+	Tags      []string          `json:"tags,omitempty"`
 
 	Client        *Target        `json:"client,omitempty"`
 	Cloud         *Cloud         `json:"cloud,omitempty"`
