@@ -1,6 +1,8 @@
 package ecs
 
-import "github.com/Motmedel/utils_go/pkg/net"
+import (
+	"github.com/Motmedel/utils_go/pkg/net"
+)
 
 type HttpHeaders struct {
 	Normalized string `json:"normalized,omitempty"`
@@ -59,8 +61,9 @@ type Base struct {
 	Vulnerability *Vulnerability `json:"vulnerability,omitempty"`
 
 	// NOTE: Custom namespaces
-	Whois *Whois `json:"whois,omitempty"`
-	Tcp   *Tcp   `json:"tcp,omitempty"`
+	Whois        *Whois             `json:"whois,omitempty"`
+	Tcp          *Tcp               `json:"tcp,omitempty"`
+	M365Defender *M365DefenderEvent `json:"m365_defender,omitempty"`
 }
 
 type AgentBuild struct {
@@ -232,36 +235,37 @@ type Error struct {
 	Type       string `json:"type,omitempty"`
 }
 
+type EmailAttachmentFile struct {
+	Extension string `json:"extension,omitempty"` // File extension without leading dot
+	MimeType  string `json:"mime_type,omitempty"` // MIME media type from Content-Type header
+	Name      string `json:"name,omitempty"`      // Full filename including extension
+	Size      int64  `json:"size,omitempty"`      // File size in bytes
+}
+
+type EmailAttachment struct {
+	File EmailAttachmentFile `json:"file,omitempty"`
+}
+
+type EmailAddress struct {
+	Address string `json:"address,omitempty"`
+}
+
 type Email struct {
-	Attachments []struct {
-		File struct {
-			Ext struct {
-				Attachment struct {
-					FileName              string `json:"file_name,omitempty"`
-					MalwareClassification struct {
-						Identifier string `json:"identifier,omitempty"`
-						Score      int    `json:"score,omitempty"`
-						Threshold  int    `json:"threshold,omitempty"`
-						Version    string `json:"version,omitempty"`
-					} `json:"malware_classification,omitempty"`
-				} `json:"attachment,omitempty"`
-			} `json:"ext,omitempty"`
-		} `json:"file,omitempty"`
-	} `json:"attachments,omitempty"`
-	Bcc []struct {
-		Address string `json:"address,omitempty"`
-	} `json:"bcc,omitempty"`
-	Cc []struct {
-		Address string `json:"address,omitempty"`
-	} `json:"cc,omitempty"`
-	From struct {
-		Address string `json:"address,omitempty"`
-	} `json:"from,omitempty"`
-	MessageId string `json:"message_id,omitempty"`
-	Subject   string `json:"subject,omitempty"`
-	To        []struct {
-		Address string `json:"address,omitempty"`
-	} `json:"to,omitempty"`
+	Attachments          []EmailAttachment `json:"attachments,omitempty"`
+	Bcc                  []EmailAddress    `json:"bcc,omitempty"`
+	Cc                   []EmailAddress    `json:"cc,omitempty"`
+	ContentType          string            `json:"content_type,omitempty"`
+	DeliveryTimestamp    string            `json:"delivery_timestamp,omitempty"`
+	Direction            string            `json:"direction,omitempty"`
+	From                 []EmailAddress    `json:"from,omitempty"`
+	LocalID              string            `json:"local_id,omitempty"`
+	MessageID            string            `json:"message_id,omitempty"`
+	OriginationTimestamp string            `json:"origination_timestamp,omitempty"`
+	ReplyTo              []EmailAddress    `json:"reply_to,omitempty"`
+	Sender               EmailAddress      `json:"sender,omitempty"`
+	Subject              string            `json:"subject,omitempty"`
+	To                   []EmailAddress    `json:"to,omitempty"`
+	XMailer              string            `json:"x_mailer,omitempty"`
 }
 
 type Event struct {
@@ -769,4 +773,112 @@ type X509 struct {
 		StateOrProvinceName string `json:"state_or_province_name,omitempty"`
 	} `json:"subject,omitempty"`
 	VersionNumber int `json:"version_number,omitempty"`
+}
+
+// NOTE: Custom
+// M365DefenderAccount represents account-related fields
+type M365DefenderAccount struct {
+	Name     string `json:"name,omitempty"`
+	Domain   string `json:"domain,omitempty"`
+	Sid      string `json:"sid,omitempty"`
+	ObjectId string `json:"object_id,omitempty"`
+	Upn      string `json:"upn,omitempty"`
+}
+
+// M365DefenderAlert represents alert-specific fields
+type M365DefenderAlert struct {
+	Id         string `json:"id,omitempty"`
+	Category   string `json:"category,omitempty"`
+	Categories string `json:"categories,omitempty"`
+}
+
+// M365DefenderDevice represents device-related fields
+type M365DefenderDevice struct {
+	Name string `json:"name,omitempty"`
+	Id   string `json:"id,omitempty"`
+}
+
+// M365DefenderEvidence represents evidence-specific fields
+type M365DefenderEvidence struct {
+	Role      string `json:"role,omitempty"`
+	Direction string `json:"direction,omitempty"`
+}
+
+// M365DefenderProcess represents process-related fields
+type M365DefenderProcess struct {
+	CommandLine string `json:"command_line,omitempty"`
+}
+
+// M365DefenderRegistry represents registry-related fields
+type M365DefenderRegistry struct {
+	Key       string `json:"key,omitempty"`
+	ValueName string `json:"value_name,omitempty"`
+	ValueData string `json:"value_data,omitempty"`
+}
+
+// M365DefenderRemote represents remote connection fields
+type M365DefenderRemote struct {
+	IP  string `json:"ip,omitempty"`
+	URL string `json:"url,omitempty"`
+}
+
+// M365DefenderLocal represents local connection fields
+type M365DefenderLocal struct {
+	IP string `json:"ip,omitempty"`
+}
+
+// M365DefenderFile represents file-related fields
+type M365DefenderFile struct {
+	Name string `json:"name,omitempty"`
+	Size int64  `json:"size,omitempty"`
+}
+
+// M365DefenderThreat represents threat-related fields
+type M365DefenderThreat struct {
+	Family string `json:"family,omitempty"`
+}
+
+// M365DefenderNetwork represents network-related fields
+type M365DefenderNetwork struct {
+	MessageId string `json:"message_id,omitempty"`
+}
+
+// M365DefenderEmail represents email-related fields
+type M365DefenderEmail struct {
+	Subject string `json:"subject,omitempty"`
+}
+
+// M365DefenderDetection represents detection-related fields
+type M365DefenderDetection struct {
+	Source string `json:"source,omitempty"`
+}
+
+// M365DefenderEvent represents the main event structure
+type M365DefenderEvent struct {
+	Timestamp          string                 `json:"timestamp,omitempty"`
+	Account            *M365DefenderAccount   `json:"account,omitempty"`
+	Alert              *M365DefenderAlert     `json:"alert,omitempty"`
+	Device             *M365DefenderDevice    `json:"device,omitempty"`
+	Evidence           *M365DefenderEvidence  `json:"evidence,omitempty"`
+	Process            *M365DefenderProcess   `json:"process,omitempty"`
+	Registry           *M365DefenderRegistry  `json:"registry,omitempty"`
+	Remote             *M365DefenderRemote    `json:"remote,omitempty"`
+	Local              *M365DefenderLocal     `json:"local,omitempty"`
+	File               *M365DefenderFile      `json:"file,omitempty"`
+	Threat             *M365DefenderThreat    `json:"threat,omitempty"`
+	Network            *M365DefenderNetwork   `json:"network,omitempty"`
+	Email              *M365DefenderEmail     `json:"email,omitempty"`
+	Detection          *M365DefenderDetection `json:"detection,omitempty"`
+	ServiceSource      string                 `json:"service_source,omitempty"`
+	Title              string                 `json:"title,omitempty"`
+	EntityType         string                 `json:"entity_type,omitempty"`
+	Application        string                 `json:"application,omitempty"`
+	ApplicationId      int                    `json:"application_id,omitempty"`
+	OAuthApplicationId string                 `json:"oauth_application_id,omitempty"`
+	AdditionalFields   string                 `json:"additional_fields,omitempty"`
+	AttackTechniques   []string               `json:"attack_techniques,omitempty"`
+	SHA1               string                 `json:"sha1,omitempty"`
+	SHA256             string                 `json:"sha256,omitempty"`
+	FolderPath         string                 `json:"folder_path,omitempty"`
+	Severity           string                 `json:"severity,omitempty"`
 }
