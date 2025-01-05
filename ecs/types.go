@@ -336,7 +336,7 @@ type Host struct {
 	Domain       string   `json:"domain,omitempty"`
 	Hostname     string   `json:"hostname,omitempty"`
 	Id           string   `json:"id,omitempty"`
-	Ip           string   `json:"ip,omitempty"`
+	Ip           []string `json:"ip,omitempty"`
 	Mac          []string `json:"mac,omitempty"`
 	Name         string   `json:"name,omitempty"`
 	Type         string   `json:"type,omitempty"`
