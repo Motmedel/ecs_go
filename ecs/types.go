@@ -39,6 +39,7 @@ type Base struct {
 	Cloud         *Cloud         `json:"cloud,omitempty"`
 	Destination   *Target        `json:"destination,omitempty"`
 	Dns           *Dns           `json:"dns,omitempty"`
+	Email         *Email         `json:"email,omitempty"`
 	Error         *Error         `json:"error,omitempty"`
 	Event         *Event         `json:"event,omitempty"`
 	File          *File          `json:"file,omitempty"`
