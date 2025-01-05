@@ -259,8 +259,8 @@ type Email struct {
 	DeliveryTimestamp    string            `json:"delivery_timestamp,omitempty"`
 	Direction            string            `json:"direction,omitempty"`
 	From                 []EmailAddress    `json:"from,omitempty"`
-	LocalID              string            `json:"local_id,omitempty"`
-	MessageID            string            `json:"message_id,omitempty"`
+	LocalId              string            `json:"local_id,omitempty"`
+	MessageId            string            `json:"message_id,omitempty"`
 	OriginationTimestamp string            `json:"origination_timestamp,omitempty"`
 	ReplyTo              []EmailAddress    `json:"reply_to,omitempty"`
 	Sender               EmailAddress      `json:"sender,omitempty"`
