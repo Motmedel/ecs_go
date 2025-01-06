@@ -4,7 +4,7 @@ go 1.23.0
 
 require (
 	github.com/Motmedel/utils_go v0.0.64
-	github.com/Motmedel/utils_go/pkg/net/domain_breakdown v0.0.1
+	github.com/Motmedel/utils_go/pkg/net/domain_breakdown v0.0.2
 )
 
-require golang.org/x/net v0.29.0 // indirect
+require golang.org/x/net v0.33.0 // indirect
