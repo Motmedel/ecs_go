@@ -349,7 +349,7 @@ type HttpRequest struct {
 	Bytes int   `json:"bytes,omitempty"`
 	// NOTE: Custom
 	ContentType string       `json:"content_type,omitempty"`
-	HttpHeaders *HttpHeaders `json:"http_headers"`
+	HttpHeaders *HttpHeaders `json:"http_headers,omitempty"`
 	Id          string       `json:"id,omitempty"`
 	Method      string       `json:"method,omitempty"`
 	MimeType    string       `json:"mime_type,omitempty"`
