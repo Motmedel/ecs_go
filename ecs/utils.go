@@ -12,6 +12,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -34,11 +35,51 @@ func validOptionalPort(port string) bool {
 	return true
 }
 
+func DefaultHeaderExtractorWithMasking(requestResponse any, maskNames []string, maskValue string) string {
+	var header http.Header
+
+	switch typedRequestResponse := requestResponse.(type) {
+	case *http.Request:
+		header = typedRequestResponse.Header
+	case *http.Response:
+		header = typedRequestResponse.Header
+	default:
+		return ""
+	}
+
+	var headerStrings []string
+
+	for name, values := range header {
+		shouldMask := slices.Contains(maskNames, strings.ToLower(name))
+		for _, value := range values {
+			if shouldMask {
+				value = maskValue
+			}
+			headerStrings = append(headerStrings, fmt.Sprintf("%s: %s\r\n", name, value))
+		}
+	}
+
+	return strings.Join(headerStrings, "")
+}
+
+func DefaultMaskedHeaderExtractor(requestResponse any) string {
+	return DefaultHeaderExtractorWithMasking(
+		requestResponse,
+		[]string{"authorization", "cookie", "set-cookie"},
+		"(MASKED)",
+	)
+}
+
+func DefaultHeaderExtractor(requestResponse any) string {
+	return DefaultHeaderExtractorWithMasking(requestResponse, nil, "")
+}
+
 func ParseHttp(
 	request *http.Request,
 	requestBodyData []byte,
 	response *http.Response,
 	responseBodyData []byte,
+	headerExtractor func(any) string,
 ) (*Base, error) {
 	if request == nil && len(requestBodyData) == 0 && response == nil && len(responseBodyData) == 0 {
 		return nil, nil
@@ -199,6 +240,12 @@ func ParseHttp(
 		}
 	}
 
+	if headerExtractor != nil {
+		if normalizedHeader := headerExtractor(request); normalizedHeader != "" {
+			httpRequest.HttpHeaders = &HttpHeaders{Normalized: normalizedHeader}
+		}
+	}
+
 	if len(requestBodyData) != 0 {
 		if httpRequest == nil {
 			httpRequest = &HttpRequest{}
@@ -212,6 +259,12 @@ func ParseHttp(
 		httpResponse = &HttpResponse{
 			StatusCode:  response.StatusCode,
 			ContentType: response.Header.Get("Content-Type"),
+		}
+
+		if headerExtractor != nil {
+			if normalizedHeader := headerExtractor(response); normalizedHeader != "" {
+				httpResponse.HttpHeaders = &HttpHeaders{Normalized: normalizedHeader}
+			}
 		}
 	}
 
@@ -242,12 +295,21 @@ func ParseHttp(
 	}, nil
 }
 
-func ParseHttpContext(httpContext *motmedelHttpTypes.HttpContext) (*Base, error) {
+func ParseHttpContext(
+	httpContext *motmedelHttpTypes.HttpContext,
+	headerExtractor func(requestResponse any) string,
+) (*Base, error) {
 	if httpContext == nil {
 		return nil, nil
 	}
 
-	return ParseHttp(httpContext.Request, httpContext.RequestBody, httpContext.Response, httpContext.ResponseBody)
+	return ParseHttp(
+		httpContext.Request,
+		httpContext.RequestBody,
+		httpContext.Response,
+		httpContext.ResponseBody,
+		headerExtractor,
+	)
 }
 
 func parseTarget(rawAddress string, rawIpAddress string, rawPort int) (*Target, error) {
