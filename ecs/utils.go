@@ -165,7 +165,7 @@ func ParseHttp(
 		if remoteAddr := request.RemoteAddr; remoteAddr != "" {
 			clientIpAddress, clientPort, err := motmedelNet.SplitAddress(remoteAddr)
 			if err != nil {
-				return nil, &motmedelErrors.InputError{
+				return nil, &motmedelErrors.Error{
 					Message: "An error occurred when splitting a remote address.",
 					Cause:   err,
 					Input:   remoteAddr,
@@ -319,7 +319,7 @@ func parseTarget(rawAddress string, rawIpAddress string, rawPort int) (*Target, 
 		ipAddressUrl := fmt.Sprintf("fake://%s", rawIpAddress)
 		urlParsedClientIpAddress, err := url.Parse(ipAddressUrl)
 		if err != nil {
-			return nil, &motmedelErrors.InputError{
+			return nil, &motmedelErrors.Error{
 				Message: "An error occurred when parsing the target IP address as an URL",
 				Cause:   err,
 				Input:   ipAddressUrl,
@@ -331,7 +331,7 @@ func parseTarget(rawAddress string, rawIpAddress string, rawPort int) (*Target, 
 		if portString := urlParsedClientIpAddress.Port(); portString != "" {
 			port, err = strconv.Atoi(portString)
 			if err != nil {
-				return nil, &motmedelErrors.InputError{
+				return nil, &motmedelErrors.Error{
 					Message: "An error occurred when parsing the target IP address URL port as an integer.",
 					Cause:   err,
 					Input:   portString,
@@ -375,7 +375,7 @@ func ParseWhoisContext(whoisContext *motmedelWhoisTypes.WhoisContext) (*Base, er
 
 	client, err := parseTarget(whoisContext.ClientAddress, whoisContext.ClientIpAddress, whoisContext.ClientPort)
 	if err != nil {
-		return nil, &motmedelErrors.CauseError{
+		return nil, &motmedelErrors.Error{
 			Message: "An error occurred when parsing client information.",
 			Cause:   err,
 		}
@@ -387,7 +387,7 @@ func ParseWhoisContext(whoisContext *motmedelWhoisTypes.WhoisContext) (*Base, er
 
 	server, err := parseTarget(whoisContext.ServerAddress, whoisContext.ServerIpAddress, whoisContext.ServerPort)
 	if err != nil {
-		return nil, &motmedelErrors.CauseError{
+		return nil, &motmedelErrors.Error{
 			Message: "An error occurred when parsing client information.",
 			Cause:   err,
 		}
