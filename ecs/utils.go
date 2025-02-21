@@ -165,11 +165,10 @@ func ParseHttp(
 		if remoteAddr := request.RemoteAddr; remoteAddr != "" {
 			clientIpAddress, clientPort, err := motmedelNet.SplitAddress(remoteAddr)
 			if err != nil {
-				return nil, &motmedelErrors.Error{
-					Message: "An error occurred when splitting a remote address.",
-					Cause:   err,
-					Input:   remoteAddr,
-				}
+				return nil, motmedelErrors.MakeError(
+					fmt.Errorf("motmedel net split address: %w", err),
+					remoteAddr,
+				)
 			}
 			client = &Target{Ip: clientIpAddress, Port: clientPort}
 		}
@@ -319,11 +318,10 @@ func parseTarget(rawAddress string, rawIpAddress string, rawPort int) (*Target, 
 		ipAddressUrl := fmt.Sprintf("fake://%s", rawIpAddress)
 		urlParsedClientIpAddress, err := url.Parse(ipAddressUrl)
 		if err != nil {
-			return nil, &motmedelErrors.Error{
-				Message: "An error occurred when parsing the target IP address as an URL",
-				Cause:   err,
-				Input:   ipAddressUrl,
-			}
+			return nil, motmedelErrors.MakeErrorWithStackTrace(
+				fmt.Errorf("url parse (crafted ip address url): %w", err),
+				ipAddressUrl,
+			)
 		}
 
 		port := rawPort
@@ -331,11 +329,10 @@ func parseTarget(rawAddress string, rawIpAddress string, rawPort int) (*Target, 
 		if portString := urlParsedClientIpAddress.Port(); portString != "" {
 			port, err = strconv.Atoi(portString)
 			if err != nil {
-				return nil, &motmedelErrors.Error{
-					Message: "An error occurred when parsing the target IP address URL port as an integer.",
-					Cause:   err,
-					Input:   portString,
-				}
+				return nil, motmedelErrors.MakeErrorWithStackTrace(
+					fmt.Errorf("strconv atoi (port string): %w", err),
+					portString,
+				)
 			}
 		}
 
@@ -373,24 +370,30 @@ func ParseWhoisContext(whoisContext *motmedelWhoisTypes.WhoisContext) (*Base, er
 		return nil, nil
 	}
 
-	client, err := parseTarget(whoisContext.ClientAddress, whoisContext.ClientIpAddress, whoisContext.ClientPort)
+	clientAddress := whoisContext.ClientAddress
+	clientIpAddress := whoisContext.ClientIpAddress
+	clientPort := whoisContext.ClientPort
+	client, err := parseTarget(clientAddress, clientIpAddress, clientPort)
 	if err != nil {
-		return nil, &motmedelErrors.Error{
-			Message: "An error occurred when parsing client information.",
-			Cause:   err,
-		}
+		return nil, motmedelErrors.MakeError(
+			fmt.Errorf("parse target (client data): %w", err),
+			[]any{clientAddress, clientIpAddress, clientPort},
+		)
 	}
 	var requestBody *Body
 	if requestData := whoisContext.RequestData; len(requestData) > 0 {
 		requestBody = &Body{Bytes: len(requestData), Content: string(requestData)}
 	}
 
-	server, err := parseTarget(whoisContext.ServerAddress, whoisContext.ServerIpAddress, whoisContext.ServerPort)
+	serverAddress := whoisContext.ServerAddress
+	serverIpAddress := whoisContext.ServerIpAddress
+	serverPort := whoisContext.ServerPort
+	server, err := parseTarget(serverAddress, serverIpAddress, serverPort)
 	if err != nil {
-		return nil, &motmedelErrors.Error{
-			Message: "An error occurred when parsing client information.",
-			Cause:   err,
-		}
+		return nil, motmedelErrors.MakeError(
+			fmt.Errorf("parse target (server data): %w", err),
+			[]any{serverAddress, serverIpAddress, serverPort},
+		)
 	}
 	var responseBody *Body
 	if responseData := whoisContext.ResponseData; len(responseData) > 0 {

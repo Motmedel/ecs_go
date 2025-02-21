@@ -349,8 +349,9 @@ type HttpRequest struct {
 	Body  *Body `json:"body,omitempty"`
 	Bytes int   `json:"bytes,omitempty"`
 	// NOTE: Custom
-	ContentType string       `json:"content_type,omitempty"`
-	HttpHeaders *HttpHeaders `json:"http_headers,omitempty"`
+	ContentType string `json:"content_type,omitempty"`
+	// NOTE: Custom
+	HttpHeaders *HttpHeaders `json:"headers,omitempty"`
 	Id          string       `json:"id,omitempty"`
 	Method      string       `json:"method,omitempty"`
 	MimeType    string       `json:"mime_type,omitempty"`
@@ -361,8 +362,9 @@ type HttpResponse struct {
 	Body  *Body `json:"body,omitempty"`
 	Bytes int   `json:"bytes,omitempty"`
 	// NOTE: Custom
-	ContentType string       `json:"content_type,omitempty"`
-	HttpHeaders *HttpHeaders `json:"http_headers,omitempty"`
+	ContentType string `json:"content_type,omitempty"`
+	// NOTE: Custom
+	HttpHeaders *HttpHeaders `json:"headers,omitempty"`
 	MimeType    string       `json:"mime_type,omitempty"`
 	// NOTE: Custom
 	ReasonPhrase string `json:"reason_phrase,omitempty"`
