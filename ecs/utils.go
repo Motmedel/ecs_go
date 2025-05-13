@@ -8,6 +8,7 @@ import (
 	motmedelNet "github.com/Motmedel/utils_go/pkg/net"
 	motmedelNetCommunityId "github.com/Motmedel/utils_go/pkg/net/community_id"
 	"github.com/Motmedel/utils_go/pkg/net/domain_breakdown"
+	motmedelTlsTypes "github.com/Motmedel/utils_go/pkg/tls/types"
 	motmedelWhoisTypes "github.com/Motmedel/utils_go/pkg/whois/types"
 	"log/slog"
 	"net"
@@ -570,4 +571,21 @@ func EnrichWithTlsConnectionState(base *Base, connectionState *tls.ConnectionSta
 			}
 		}
 	}
+}
+
+func EnrichWithTlsContext(base *Base, tlsContext *motmedelTlsTypes.TlsContext) {
+	if base == nil {
+		return
+	}
+
+	if tlsContext == nil {
+		return
+	}
+
+	connectionState := tlsContext.ConnectionState
+	if connectionState == nil {
+		return
+	}
+
+	EnrichWithTlsConnectionState(base, connectionState, tlsContext.ClientInitiated)
 }
