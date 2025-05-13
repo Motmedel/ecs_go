@@ -659,29 +659,46 @@ type Threat struct {
 	Technique   *ThreatTechnique    `json:"technique,omitempty"`
 }
 
+type TlsHash struct {
+	Md5    string `json:"md5,omitempty"`
+	Sha1   string `json:"sha1,omitempty"`
+	Sha256 string `json:"sha256,omitempty"`
+}
+
+type TlsClient struct {
+	Certificate      string   `json:"certificate,omitempty"`
+	CertificateChain []string `json:"certificate_chain,omitempty"`
+	Hash             *TlsHash `json:"hash,omitempty"`
+	Issuer           string   `json:"issuer,omitempty"`
+	Ja3              string   `json:"ja3,omitempty"`
+	NotAfter         string   `json:"not_after,omitempty"`
+	NotBefore        string   `json:"not_before,omitempty"`
+	ServerName       string   `json:"server_name,omitempty"`
+	Subject          string   `json:"subject,omitempty"`
+	SupportedCiphers []string `json:"supported_ciphers,omitempty"`
+}
+
+type TlsServer struct {
+	Certificate      string   `json:"certificate,omitempty"`
+	CertificateChain []string `json:"certificate_chain,omitempty"`
+	Hash             *TlsHash `json:"hash,omitempty"`
+	Issuer           string   `json:"issuer,omitempty"`
+	Ja3s             string   `json:"ja3s,omitempty"`
+	NotAfter         string   `json:"not_after,omitempty"`
+	NotBefore        string   `json:"not_before,omitempty"`
+	Subject          string   `json:"subject,omitempty"`
+}
+
 type Tls struct {
-	Client struct {
-		Hash struct {
-			Sha1   string `json:"sha1,omitempty"`
-			Sha256 string `json:"sha256,omitempty"`
-		} `json:"hash,omitempty"`
-		Issuer    string `json:"issuer,omitempty"`
-		NotAfter  string `json:"not_after,omitempty"`
-		NotBefore string `json:"not_before,omitempty"`
-		Subject   string `json:"subject,omitempty"`
-		Version   string `json:"version,omitempty"`
-	} `json:"client,omitempty"`
-	Server struct {
-		Hash struct {
-			Sha1   string `json:"sha1,omitempty"`
-			Sha256 string `json:"sha256,omitempty"`
-		} `json:"hash,omitempty"`
-		Issuer    string `json:"issuer,omitempty"`
-		NotAfter  string `json:"not_after,omitempty"`
-		NotBefore string `json:"not_before,omitempty"`
-		Subject   string `json:"subject,omitempty"`
-		Version   string `json:"version,omitempty"`
-	} `json:"server,omitempty"`
+	Cipher          string     `json:"cipher,omitempty"`
+	Client          *TlsClient `json:"client,omitempty"`
+	Curve           string     `json:"curve,omitempty"`
+	Established     bool       `json:"established,omitempty"`
+	NextProtocol    string     `json:"next_protocol,omitempty"`
+	Resumed         bool       `json:"resumed,omitempty"`
+	Server          *TlsServer `json:"server,omitempty"`
+	Version         string     `json:"version,omitempty"`
+	VersionProtocol string     `json:"version_protocol,omitempty"`
 }
 
 type Url struct {
