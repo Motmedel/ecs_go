@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"crypto/tls"
 	"fmt"
 	motmedelErrors "github.com/Motmedel/utils_go/pkg/errors"
 	motmedelHttpTypes "github.com/Motmedel/utils_go/pkg/http/types"
@@ -15,6 +16,10 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+)
+
+const (
+	timestampFormat = "2006-01-02T15:04:05.999999999Z"
 )
 
 // NOTE: Copied
@@ -486,4 +491,83 @@ func CommunityIdFromTargets(sourceTarget *Target, destinationTarget *Target, pro
 		uint16(destinationTargetPort),
 		uint8(protocolNumber),
 	)
+}
+
+func EnrichWithTlsConnectionState(base *Base, connectionState *tls.ConnectionState, clientInitiated bool) {
+	if base == nil {
+		return
+	}
+
+	if connectionState == nil {
+		return
+	}
+
+	ecsTls := base.Tls
+	if ecsTls == nil {
+		ecsTls = &Tls{}
+		base.Tls = ecsTls
+	}
+
+	ecsTls.Cipher = tls.CipherSuiteName(connectionState.CipherSuite)
+	ecsTls.Established = connectionState.HandshakeComplete
+	ecsTls.NextProtocol = strings.ToLower(connectionState.NegotiatedProtocol)
+	ecsTls.Resumed = connectionState.DidResume
+
+	switch connectionState.Version {
+	case tls.VersionSSL30:
+		ecsTls.TlsProtocol = &TlsProtocol{Name: "ssl", Version: "3"}
+	case tls.VersionTLS10:
+		ecsTls.TlsProtocol = &TlsProtocol{Name: "tls", Version: "1.0"}
+	case tls.VersionTLS11:
+		ecsTls.TlsProtocol = &TlsProtocol{Name: "tls", Version: "1.1"}
+	case tls.VersionTLS12:
+		ecsTls.TlsProtocol = &TlsProtocol{Name: "tls", Version: "1.2"}
+	case tls.VersionTLS13:
+		ecsTls.TlsProtocol = &TlsProtocol{Name: "tls", Version: "1.3"}
+	}
+
+	if serverName := connectionState.ServerName; serverName != "" {
+		ecsTlsClient := ecsTls.Client
+		if ecsTlsClient == nil {
+			ecsTlsClient = &TlsClient{}
+			ecsTls.Client = ecsTlsClient
+		}
+
+		ecsTlsClient.ServerName = serverName
+	}
+
+	if peerCertificates := connectionState.PeerCertificates; len(peerCertificates) > 0 {
+		if leaf := peerCertificates[0]; leaf != nil {
+			// TODO: Add more fields.
+
+			issuer := leaf.Issuer.String()
+			subject := leaf.Subject.String()
+			notAfter := leaf.NotAfter.UTC().Format(timestampFormat)
+			notBefore := leaf.NotBefore.UTC().Format(timestampFormat)
+
+			if !clientInitiated {
+				ecsTlsClient := ecsTls.Client
+				if ecsTlsClient == nil {
+					ecsTlsClient = &TlsClient{}
+					ecsTls.Client = ecsTlsClient
+				}
+
+				ecsTlsClient.Issuer = issuer
+				ecsTlsClient.Subject = subject
+				ecsTlsClient.NotAfter = notAfter
+				ecsTlsClient.NotBefore = notBefore
+			} else {
+				ecsTlsServer := ecsTls.Server
+				if ecsTlsServer == nil {
+					ecsTlsServer = &TlsServer{}
+					ecsTls.Server = ecsTlsServer
+				}
+
+				ecsTlsServer.Issuer = issuer
+				ecsTlsServer.Subject = subject
+				ecsTlsServer.NotAfter = notAfter
+				ecsTlsServer.NotBefore = notBefore
+			}
+		}
+	}
 }

@@ -1,5 +1,5 @@
-github.com/Motmedel/utils_go v0.0.199 h1:yPV177CkJLsDGWfplXn+PkjRC5lKm//S2mhNiqe2FqA=
-github.com/Motmedel/utils_go v0.0.199/go.mod h1:kKm8jM7GA8M7ICIImi5etOMixRgQfnStBPjEoCMTgbg=
+github.com/Motmedel/utils_go v0.0.201 h1:t4rro8RC+50BfldMl+t8SatvYy7RiArareRjbRIq9sg=
+github.com/Motmedel/utils_go v0.0.201/go.mod h1:kKm8jM7GA8M7ICIImi5etOMixRgQfnStBPjEoCMTgbg=
 github.com/Motmedel/utils_go/pkg/net/domain_breakdown v0.0.4 h1:HKnAihmiXayMLJpTLHcZ+CDZwzm/gtHbG0O2z/Ula1I=
 github.com/Motmedel/utils_go/pkg/net/domain_breakdown v0.0.4/go.mod h1:9+oW16JZtqHOcJxe1J6BCZOtFFTi1a60LCESRZBq+Rg=
 golang.org/x/net v0.35.0 h1:T5GQRQb2y08kTAByq9L4/bz8cipCdA8FbRTXewonqY8=
