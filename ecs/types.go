@@ -55,6 +55,7 @@ type Base struct {
 	Server        *Target        `json:"server,omitempty"`
 	Source        *Target        `json:"source,omitempty"`
 	Threat        *Threat        `json:"threat,omitempty"`
+	Tls           *Tls           `json:"tls,omitempty"`
 	Network       *Network       `json:"network,omitempty"`
 	Url           *Url           `json:"url,omitempty"`
 	User          *User          `json:"user,omitempty"`
