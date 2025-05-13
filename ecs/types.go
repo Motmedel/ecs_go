@@ -676,6 +676,7 @@ type TlsClient struct {
 	ServerName       string   `json:"server_name,omitempty"`
 	Subject          string   `json:"subject,omitempty"`
 	SupportedCiphers []string `json:"supported_ciphers,omitempty"`
+	X509             *X509    `json:"x509,omitempty"`
 }
 
 type TlsServer struct {
@@ -687,18 +688,26 @@ type TlsServer struct {
 	NotAfter         string   `json:"not_after,omitempty"`
 	NotBefore        string   `json:"not_before,omitempty"`
 	Subject          string   `json:"subject,omitempty"`
+	X509             *X509    `json:"x509,omitempty"`
+}
+
+// NOTE: Custom/OpenTelemetroy
+type TlsProtocol struct {
+	Name    string `json:"name,omitempty"`
+	Version string `json:"version,omitempty"`
 }
 
 type Tls struct {
-	Cipher          string     `json:"cipher,omitempty"`
-	Client          *TlsClient `json:"client,omitempty"`
-	Curve           string     `json:"curve,omitempty"`
-	Established     bool       `json:"established,omitempty"`
-	NextProtocol    string     `json:"next_protocol,omitempty"`
-	Resumed         bool       `json:"resumed,omitempty"`
-	Server          *TlsServer `json:"server,omitempty"`
-	Version         string     `json:"version,omitempty"`
-	VersionProtocol string     `json:"version_protocol,omitempty"`
+	Cipher          string       `json:"cipher,omitempty"`
+	Client          *TlsClient   `json:"client,omitempty"`
+	Curve           string       `json:"curve,omitempty"`
+	Established     bool         `json:"established,omitempty"`
+	NextProtocol    string       `json:"next_protocol,omitempty"`
+	Resumed         bool         `json:"resumed,omitempty"`
+	Server          *TlsServer   `json:"server,omitempty"`
+	TlsProtocol     *TlsProtocol `json:"protocol,omitempty"`
+	Version         string       `json:"version,omitempty"`
+	VersionProtocol string       `json:"version_protocol,omitempty"`
 }
 
 type Url struct {
@@ -752,6 +761,31 @@ type Vulnerability struct {
 	Severity       string                `json:"severity,omitempty"`
 }
 
+type X509Target struct {
+	CommonName          []string `json:"common_name,omitempty"`
+	Country             string   `json:"country,omitempty"`
+	DistinguishedName   string   `json:"distinguished_name,omitempty"`
+	Locality            []string `json:"locality,omitempty"`
+	Organization        []string `json:"organization,omitempty"`
+	OrganizationalUnit  []string `json:"organizational_unit,omitempty"`
+	StateOrProvinceName []string `json:"state_or_province_name,omitempty"`
+}
+
+type X509 struct {
+	AlternativeNames   []string    `json:"alternate_names,omitempty"`
+	Issuer             *X509Target `json:"issuer,omitempty"`
+	NotAfter           string      `json:"not_after,omitempty"`
+	NotBefore          string      `json:"not_before,omitempty"`
+	PublicKeyAlgorithm string      `json:"public_key_algorithm,omitempty"`
+	PublicKeyCurve     string      `json:"public_key_curve,omitempty"`
+	PublicKeyExponent  int         `json:"public_key_exponent,omitempty"`
+	PublicKeySize      int         `json:"public_key_size,omitempty"`
+	SerialNumber       string      `json:"serial_number,omitempty"`
+	SignatureAlgorithm string      `json:"signature_algorithm,omitempty"`
+	Subject            *X509Target `json:"subject,omitempty"`
+	VersionNumber      string      `json:"version_number,omitempty"`
+}
+
 // NOTE: Custom
 
 type WhoisRequest struct {
@@ -770,28 +804,4 @@ type WhoisResponse struct {
 type Whois struct {
 	Request  *WhoisRequest  `json:"request,omitempty"`
 	Response *WhoisResponse `json:"response,omitempty"`
-}
-
-type X509 struct {
-	AlternateNames []string `json:"alternate_names,omitempty"`
-	Issuer         struct {
-		CommonName          string `json:"common_name,omitempty"`
-		Country             string `json:"country,omitempty"`
-		Organization        string `json:"organization,omitempty"`
-		OrganizationalUnit  string `json:"organizational_unit,omitempty"`
-		StateOrProvinceName string `json:"state_or_province_name,omitempty"`
-	} `json:"issuer,omitempty"`
-	NotAfter           string `json:"not_after,omitempty"`
-	NotBefore          string `json:"not_before,omitempty"`
-	PublicKeyAlgorithm string `json:"public_key_algorithm,omitempty"`
-	SerialNumber       string `json:"serial_number,omitempty"`
-	SignatureAlgorithm string `json:"signature_algorithm,omitempty"`
-	Subject            struct {
-		CommonName          string `json:"common_name,omitempty"`
-		Country             string `json:"country,omitempty"`
-		Organization        string `json:"organization,omitempty"`
-		OrganizationalUnit  string `json:"organizational_unit,omitempty"`
-		StateOrProvinceName string `json:"state_or_province_name,omitempty"`
-	} `json:"subject,omitempty"`
-	VersionNumber int `json:"version_number,omitempty"`
 }
