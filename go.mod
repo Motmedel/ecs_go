@@ -9,4 +9,4 @@ require (
 	github.com/Motmedel/utils_go/pkg/net/domain_breakdown v0.0.4
 )
 
-require golang.org/x/net v0.35.0 // indirect
+require golang.org/x/net v0.38.0 // indirect
