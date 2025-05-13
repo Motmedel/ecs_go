@@ -764,7 +764,7 @@ type Vulnerability struct {
 
 type X509Target struct {
 	CommonName          []string `json:"common_name,omitempty"`
-	Country             string   `json:"country,omitempty"`
+	Country             []string `json:"country,omitempty"`
 	DistinguishedName   string   `json:"distinguished_name,omitempty"`
 	Locality            []string `json:"locality,omitempty"`
 	Organization        []string `json:"organization,omitempty"`
