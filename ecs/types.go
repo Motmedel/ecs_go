@@ -692,7 +692,8 @@ type TlsServer struct {
 	X509             *X509    `json:"x509,omitempty"`
 }
 
-// NOTE: Custom/OpenTelemetroy
+// NOTE: Custom/OpenTelemetry
+
 type TlsProtocol struct {
 	Name    string `json:"name,omitempty"`
 	Version string `json:"version,omitempty"`

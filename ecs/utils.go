@@ -237,8 +237,8 @@ func ParseHttp(
 		if remoteAddr := request.RemoteAddr; remoteAddr != "" {
 			clientIpAddress, clientPort, err := motmedelNet.SplitAddress(remoteAddr)
 			if err != nil {
-				return nil, motmedelErrors.MakeError(
-					fmt.Errorf("motmedel net split address: %w", err),
+				return nil, motmedelErrors.New(
+					fmt.Errorf("split address: %w", err),
 					remoteAddr,
 				)
 			}
@@ -390,7 +390,7 @@ func parseTarget(rawAddress string, rawIpAddress string, rawPort int) (*Target, 
 		ipAddressUrl := fmt.Sprintf("fake://%s", rawIpAddress)
 		urlParsedClientIpAddress, err := url.Parse(ipAddressUrl)
 		if err != nil {
-			return nil, motmedelErrors.MakeErrorWithStackTrace(
+			return nil, motmedelErrors.NewWithTrace(
 				fmt.Errorf("url parse (crafted ip address url): %w", err),
 				ipAddressUrl,
 			)
@@ -401,7 +401,7 @@ func parseTarget(rawAddress string, rawIpAddress string, rawPort int) (*Target, 
 		if portString := urlParsedClientIpAddress.Port(); portString != "" {
 			port, err = strconv.Atoi(portString)
 			if err != nil {
-				return nil, motmedelErrors.MakeErrorWithStackTrace(
+				return nil, motmedelErrors.NewWithTrace(
 					fmt.Errorf("strconv atoi (port string): %w", err),
 					portString,
 				)
@@ -447,7 +447,7 @@ func ParseWhoisContext(whoisContext *motmedelWhoisTypes.WhoisContext) (*Base, er
 	clientPort := whoisContext.ClientPort
 	client, err := parseTarget(clientAddress, clientIpAddress, clientPort)
 	if err != nil {
-		return nil, motmedelErrors.MakeError(
+		return nil, motmedelErrors.New(
 			fmt.Errorf("parse target (client data): %w", err),
 			[]any{clientAddress, clientIpAddress, clientPort},
 		)
@@ -462,7 +462,7 @@ func ParseWhoisContext(whoisContext *motmedelWhoisTypes.WhoisContext) (*Base, er
 	serverPort := whoisContext.ServerPort
 	server, err := parseTarget(serverAddress, serverIpAddress, serverPort)
 	if err != nil {
-		return nil, motmedelErrors.MakeError(
+		return nil, motmedelErrors.New(
 			fmt.Errorf("parse target (server data): %w", err),
 			[]any{serverAddress, serverIpAddress, serverPort},
 		)
