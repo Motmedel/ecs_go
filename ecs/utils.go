@@ -24,8 +24,7 @@ const (
 )
 
 // NOTE: Copied
-// validOptionalPort reports whether port is either an empty string
-// or matches /^:\d*$/
+// validOptionalPort reports whether port is either an empty string or matches /^:\d*$/
 func validOptionalPort(port string) bool {
 	if port == "" {
 		return true

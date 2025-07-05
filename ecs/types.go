@@ -239,14 +239,15 @@ type Error struct {
 }
 
 type EmailAttachmentFile struct {
-	Extension string `json:"extension,omitempty"` // File extension without leading dot
-	MimeType  string `json:"mime_type,omitempty"` // MIME media type from Content-Type header
-	Name      string `json:"name,omitempty"`      // Full filename including extension
-	Size      int64  `json:"size,omitempty"`      // File size in bytes
+	Extension string `json:"extension,omitempty"`
+	MimeType  string `json:"mime_type,omitempty"`
+	Name      string `json:"name,omitempty"`
+	Size      int    `json:"size,omitempty"`
+	Hash *Hash `json:"hash,omitempty"`
 }
 
 type EmailAttachment struct {
-	File EmailAttachmentFile `json:"file,omitempty"`
+	File *EmailAttachmentFile `json:"file,omitempty"`
 }
 
 type EmailAddress struct {
@@ -254,21 +255,21 @@ type EmailAddress struct {
 }
 
 type Email struct {
-	Attachments          []EmailAttachment `json:"attachments,omitempty"`
-	Bcc                  []EmailAddress    `json:"bcc,omitempty"`
-	Cc                   []EmailAddress    `json:"cc,omitempty"`
-	ContentType          string            `json:"content_type,omitempty"`
-	DeliveryTimestamp    string            `json:"delivery_timestamp,omitempty"`
-	Direction            string            `json:"direction,omitempty"`
-	From                 []EmailAddress    `json:"from,omitempty"`
-	LocalId              string            `json:"local_id,omitempty"`
-	MessageId            string            `json:"message_id,omitempty"`
-	OriginationTimestamp string            `json:"origination_timestamp,omitempty"`
-	ReplyTo              []EmailAddress    `json:"reply_to,omitempty"`
-	Sender               EmailAddress      `json:"sender,omitempty"`
-	Subject              string            `json:"subject,omitempty"`
-	To                   []EmailAddress    `json:"to,omitempty"`
-	XMailer              string            `json:"x_mailer,omitempty"`
+	Attachments          []*EmailAttachment `json:"attachments,omitempty"`
+	Bcc                  []*EmailAddress    `json:"bcc,omitempty"`
+	Cc                   []*EmailAddress    `json:"cc,omitempty"`
+	ContentType          string             `json:"content_type,omitempty"`
+	DeliveryTimestamp    string             `json:"delivery_timestamp,omitempty"`
+	Direction            string             `json:"direction,omitempty"`
+	From                 []*EmailAddress     `json:"from,omitempty"`
+	LocalId              string             `json:"local_id,omitempty"`
+	MessageId            string             `json:"message_id,omitempty"`
+	OriginationTimestamp string             `json:"origination_timestamp,omitempty"`
+	ReplyTo              []*EmailAddress     `json:"reply_to,omitempty"`
+	Sender               *EmailAddress       `json:"sender,omitempty"`
+	Subject              string             `json:"subject,omitempty"`
+	To                   []*EmailAddress     `json:"to,omitempty"`
+	XMailer              string             `json:"x_mailer,omitempty"`
 }
 
 type Event struct {
