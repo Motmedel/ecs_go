@@ -3,13 +3,6 @@ package ecs
 import (
 	"crypto/tls"
 	"fmt"
-	motmedelErrors "github.com/Motmedel/utils_go/pkg/errors"
-	motmedelHttpTypes "github.com/Motmedel/utils_go/pkg/http/types"
-	motmedelNet "github.com/Motmedel/utils_go/pkg/net"
-	motmedelNetCommunityId "github.com/Motmedel/utils_go/pkg/net/community_id"
-	"github.com/Motmedel/utils_go/pkg/net/domain_breakdown"
-	motmedelTlsTypes "github.com/Motmedel/utils_go/pkg/tls/types"
-	motmedelWhoisTypes "github.com/Motmedel/utils_go/pkg/whois/types"
 	"log/slog"
 	"net"
 	"net/http"
@@ -17,6 +10,14 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+
+	motmedelErrors "github.com/Motmedel/utils_go/pkg/errors"
+	motmedelHttpTypes "github.com/Motmedel/utils_go/pkg/http/types"
+	motmedelNet "github.com/Motmedel/utils_go/pkg/net"
+	motmedelNetCommunityId "github.com/Motmedel/utils_go/pkg/net/community_id"
+	"github.com/Motmedel/utils_go/pkg/net/domain_breakdown"
+	motmedelTlsTypes "github.com/Motmedel/utils_go/pkg/tls/types"
+	motmedelWhoisTypes "github.com/Motmedel/utils_go/pkg/whois/types"
 )
 
 const (

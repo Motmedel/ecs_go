@@ -114,11 +114,13 @@ type User struct {
 	Domain   string `json:"domain,omitempty"`
 	Email    string `json:"email,omitempty"`
 	FullName string `json:"full_name,omitempty"`
-	Group    *Group `json:"group,omitempty"`
 	Hash     string `json:"hash,omitempty"`
 	Id       string `json:"id,omitempty"`
 	Name     string `json:"name,omitempty"`
 	Roles    string `json:"roles,omitempty"`
+	Changes  *User  `json:"changes,omitempty"`
+	Group    *Group `json:"group,omitempty"`
+	Target   *User  `json:"target,omitempty"`
 }
 
 type CloudAccount struct {
@@ -243,7 +245,7 @@ type EmailAttachmentFile struct {
 	MimeType  string `json:"mime_type,omitempty"`
 	Name      string `json:"name,omitempty"`
 	Size      int    `json:"size,omitempty"`
-	Hash *Hash `json:"hash,omitempty"`
+	Hash      *Hash  `json:"hash,omitempty"`
 }
 
 type EmailAttachment struct {
@@ -261,14 +263,14 @@ type Email struct {
 	ContentType          string             `json:"content_type,omitempty"`
 	DeliveryTimestamp    string             `json:"delivery_timestamp,omitempty"`
 	Direction            string             `json:"direction,omitempty"`
-	From                 []*EmailAddress     `json:"from,omitempty"`
+	From                 []*EmailAddress    `json:"from,omitempty"`
 	LocalId              string             `json:"local_id,omitempty"`
 	MessageId            string             `json:"message_id,omitempty"`
 	OriginationTimestamp string             `json:"origination_timestamp,omitempty"`
-	ReplyTo              []*EmailAddress     `json:"reply_to,omitempty"`
-	Sender               *EmailAddress       `json:"sender,omitempty"`
+	ReplyTo              []*EmailAddress    `json:"reply_to,omitempty"`
+	Sender               *EmailAddress      `json:"sender,omitempty"`
 	Subject              string             `json:"subject,omitempty"`
-	To                   []*EmailAddress     `json:"to,omitempty"`
+	To                   []*EmailAddress    `json:"to,omitempty"`
 	XMailer              string             `json:"x_mailer,omitempty"`
 }
 
