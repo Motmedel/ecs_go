@@ -117,7 +117,7 @@ type User struct {
 	Hash     string `json:"hash,omitempty"`
 	Id       string `json:"id,omitempty"`
 	Name     string `json:"name,omitempty"`
-	Roles    string `json:"roles,omitempty"`
+	Roles    []string `json:"roles,omitempty"`
 	Changes  *User  `json:"changes,omitempty"`
 	Group    *Group `json:"group,omitempty"`
 	Target   *User  `json:"target,omitempty"`
