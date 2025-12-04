@@ -368,19 +368,54 @@ func ParseHttp(
 
 func ParseHttpContext(
 	httpContext *motmedelHttpTypes.HttpContext,
+	// TODO: Rework this. `any` is not nice. Use an interface?
 	headerExtractor func(requestResponse any) string,
 ) (*Base, error) {
 	if httpContext == nil {
 		return nil, nil
 	}
 
-	return ParseHttp(
+	var user *User
+	if httpContextUser := httpContext.User; httpContextUser != nil {
+		user = &User{
+			Domain:   httpContextUser.Domain,
+			Email:    httpContextUser.Email,
+			FullName: httpContextUser.FullName,
+			Hash:     httpContextUser.Hash,
+			Id:       httpContextUser.Id,
+			Name:     httpContextUser.Name,
+			Roles:    httpContextUser.Roles,
+		}
+
+		var group *Group
+		if httpContextUserGroup := httpContextUser.Group; httpContextUserGroup != nil {
+			group = &Group{
+				Domain: httpContextUserGroup.Domain,
+				Id:     httpContextUserGroup.Id,
+				Name:   httpContextUserGroup.Name,
+			}
+		}
+		user.Group = group
+	}
+
+	base, err := ParseHttp(
 		httpContext.Request,
 		httpContext.RequestBody,
 		httpContext.Response,
 		httpContext.ResponseBody,
 		headerExtractor,
 	)
+	if err != nil {
+		return nil, motmedelErrors.New(
+			fmt.Errorf("parse http: %w", err),
+		)
+	}
+
+	if base != nil {
+		base.User = user
+	}
+
+	return base, nil
 }
 
 func parseTarget(rawAddress string, rawIpAddress string, rawPort int) (*Target, error) {
@@ -449,7 +484,7 @@ func ParseWhoisContext(whoisContext *motmedelWhoisTypes.WhoisContext) (*Base, er
 	if err != nil {
 		return nil, motmedelErrors.New(
 			fmt.Errorf("parse target (client data): %w", err),
-			[]any{clientAddress, clientIpAddress, clientPort},
+			clientAddress, clientAddress, clientPort,
 		)
 	}
 	var requestBody *Body
@@ -464,7 +499,7 @@ func ParseWhoisContext(whoisContext *motmedelWhoisTypes.WhoisContext) (*Base, er
 	if err != nil {
 		return nil, motmedelErrors.New(
 			fmt.Errorf("parse target (server data): %w", err),
-			[]any{serverAddress, serverIpAddress, serverPort},
+			serverAddress, serverIpAddress, serverPort,
 		)
 	}
 	var responseBody *Body
