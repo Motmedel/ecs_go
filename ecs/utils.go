@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
+	"net/mail"
 	"net/url"
 	"slices"
 	"strconv"
@@ -689,4 +690,16 @@ func EnrichWithTlsContext(base *Base, tlsContext *motmedelTlsTypes.TlsContext) {
 	}
 
 	EnrichWithTlsConnectionState(base, connectionState, tlsContext.ClientInitiated)
+}
+
+func ParseEmailAddress(value string) (*EmailAddress, error) {
+	if value == "" {
+		return nil, nil
+	}
+
+	addr, err := mail.ParseAddress(value)
+	if err != nil {
+		return nil, fmt.Errorf("mail parse address: %w", err)
+	}
+	return &EmailAddress{Address: addr.Address, Name: addr.Name}, nil
 }
