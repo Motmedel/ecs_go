@@ -253,6 +253,8 @@ type EmailAttachment struct {
 }
 
 type EmailAddress struct {
+	// NOTE: Custom
+	Name string `json:"name,omitempty"`
 	Address string `json:"address,omitempty"`
 }
 
