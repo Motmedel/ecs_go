@@ -15,8 +15,8 @@ import (
 	motmedelErrors "github.com/Motmedel/utils_go/pkg/errors"
 	motmedelHttpTypes "github.com/Motmedel/utils_go/pkg/http/types"
 	motmedelNet "github.com/Motmedel/utils_go/pkg/net"
-	motmedelNetCommunityId "github.com/Motmedel/utils_go/pkg/net/community_id"
-	"github.com/Motmedel/utils_go/pkg/net/domain_breakdown"
+	motmedelFlowTuple "github.com/Motmedel/utils_go/pkg/net/types/flow_tuple"
+	"github.com/Motmedel/utils_go/pkg/net/types/domain_parts"
 	motmedelTlsTypes "github.com/Motmedel/utils_go/pkg/tls/types"
 	motmedelWhoisTypes "github.com/Motmedel/utils_go/pkg/whois/types"
 )
@@ -187,7 +187,7 @@ func ParseHttp(
 			trimmedHost = host[1 : len(host)-1]
 		}
 
-		domainBreakdown := domain_breakdown.GetDomainBreakdown(trimmedHost)
+		domainParts := domain_parts.New(trimmedHost)
 
 		var port int
 		if portString := requestUrl.Port(); portString != "" {
@@ -205,10 +205,10 @@ func ParseHttp(
 				}
 			} else {
 				server.Domain = trimmedHost
-				if domainBreakdown != nil {
-					server.RegisteredDomain = domainBreakdown.RegisteredDomain
-					server.Subdomain = domainBreakdown.Subdomain
-					server.TopLevelDomain = domainBreakdown.TopLevelDomain
+				if domainParts != nil {
+					server.RegisteredDomain = domainParts.RegisteredDomain
+					server.Subdomain = domainParts.Subdomain
+					server.TopLevelDomain = domainParts.TopLevelDomain
 				}
 			}
 		}
@@ -261,10 +261,10 @@ func ParseHttp(
 			Scheme:   requestUrl.Scheme,
 			Username: username,
 		}
-		if domainBreakdown != nil {
-			ecsUrl.RegisteredDomain = domainBreakdown.RegisteredDomain
-			ecsUrl.Subdomain = domainBreakdown.Subdomain
-			ecsUrl.TopLevelDomain = domainBreakdown.TopLevelDomain
+		if domainParts != nil {
+			ecsUrl.RegisteredDomain = domainParts.RegisteredDomain
+			ecsUrl.Subdomain = domainParts.Subdomain
+			ecsUrl.TopLevelDomain = domainParts.TopLevelDomain
 		}
 
 		httpRequest = &HttpRequest{
@@ -296,13 +296,13 @@ func ParseHttp(
 				protocolNumber, _ := strconv.Atoi(network.IanaNumber)
 
 				if serverIp != nil && clientIp != nil && serverPort != 0 && clientPort != 0 && protocolNumber != 0 {
-					communityId := motmedelNetCommunityId.MakeFlowTupleHash(
+					communityId := motmedelFlowTuple.New(
 						serverIp,
 						clientIp,
 						uint16(serverPort),
 						uint16(clientPort),
 						uint8(protocolNumber),
-					)
+					).Hash()
 
 					if communityId != "" {
 						network.CommunityId = append(network.CommunityId, communityId)
@@ -461,11 +461,11 @@ func parseTarget(rawAddress string, rawIpAddress string, rawPort int) (*Target, 
 
 	if target != nil {
 		if domain := target.Domain; domain != "" {
-			domainBreakdown := domain_breakdown.GetDomainBreakdown(domain)
-			if domainBreakdown != nil {
-				target.RegisteredDomain = domainBreakdown.RegisteredDomain
-				target.Subdomain = domainBreakdown.Subdomain
-				target.TopLevelDomain = domainBreakdown.TopLevelDomain
+			domainParts := domain_parts.New(domain)
+			if domainParts != nil {
+				target.RegisteredDomain = domainParts.RegisteredDomain
+				target.Subdomain = domainParts.Subdomain
+				target.TopLevelDomain = domainParts.TopLevelDomain
 			}
 		}
 	}
@@ -587,13 +587,13 @@ func CommunityIdFromTargets(sourceTarget *Target, destinationTarget *Target, pro
 		return ""
 	}
 
-	return motmedelNetCommunityId.MakeFlowTupleHash(
+	return motmedelFlowTuple.New(
 		sourceTargetIp,
 		destinationTargetIp,
 		uint16(sourceTargetPort),
 		uint16(destinationTargetPort),
 		uint8(protocolNumber),
-	)
+	).Hash()
 }
 
 func EnrichWithTlsConnectionState(base *Base, connectionState *tls.ConnectionState, clientInitiated bool) {

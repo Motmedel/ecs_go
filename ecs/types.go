@@ -1,7 +1,7 @@
 package ecs
 
 import (
-	"github.com/Motmedel/utils_go/pkg/net"
+	"github.com/Motmedel/utils_go/pkg/net/types/domain_parts"
 )
 
 type HttpHeaders struct {
@@ -15,7 +15,7 @@ type Body struct {
 }
 
 type Target struct {
-	net.DomainBreakdown
+	domain_parts.Parts
 	Address string            `json:"address,omitempty"`
 	Bytes   int               `json:"bytes,omitempty"`
 	Domain  string            `json:"domain,omitempty"`
@@ -213,7 +213,7 @@ type DnsAnswer struct {
 }
 
 type DnsQuestion struct {
-	net.DomainBreakdown
+	domain_parts.Parts
 	Class string `json:"class,omitempty"`
 	Name  string `json:"name,omitempty"`
 	Type  string `json:"type,omitempty"`
@@ -718,7 +718,7 @@ type Tls struct {
 }
 
 type Url struct {
-	net.DomainBreakdown
+	domain_parts.Parts
 	Domain    string `json:"domain,omitempty"`
 	Extension string `json:"extension,omitempty"`
 	Fragment  string `json:"fragment,omitempty"`
